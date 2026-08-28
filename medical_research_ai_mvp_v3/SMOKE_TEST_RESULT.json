@@ -1,0 +1,68 @@
+[
+  {
+    "query": "筛选出近三年所有非小细胞肺癌且EGFR突变的患者，对比不同治疗方案的生存期",
+    "n": 273,
+    "disease": "NSCLC",
+    "endpoint": "OS",
+    "groups": 3,
+    "method": "Kaplan-Meier + Log-rank + Cox PH",
+    "p": 4.477142442417193e-09,
+    "cox_rows": 4,
+    "error": null
+  },
+  {
+    "query": "筛选近四年HER2阳性乳腺癌患者，对比不同治疗方案的生存期",
+    "n": 206,
+    "disease": "BREAST_CANCER",
+    "endpoint": "OS",
+    "groups": 3,
+    "method": "Kaplan-Meier + Log-rank + Cox PH",
+    "p": 1.4053735952528848e-10,
+    "cox_rows": 4,
+    "error": null
+  },
+  {
+    "query": "筛选近三年KRAS突变结直肠癌患者，对比不同治疗方案的生存期",
+    "n": 153,
+    "disease": "COLORECTAL_CANCER",
+    "endpoint": "OS",
+    "groups": 3,
+    "method": "Kaplan-Meier + Log-rank + Cox PH",
+    "p": 0.00025158750880278436,
+    "cox_rows": 4,
+    "error": null
+  },
+  {
+    "query": "筛选近三年2型糖尿病患者，比较不同治疗方案治疗后的HbA1c水平",
+    "n": 456,
+    "disease": "T2DM",
+    "endpoint": "HBA1C_FOLLOWUP",
+    "groups": 3,
+    "method": "One-way ANOVA",
+    "p": 1.7288572220756106e-09,
+    "cox_rows": 0,
+    "error": null
+  },
+  {
+    "query": "筛选近三年高血压患者，比较不同治疗方案的血压控制率",
+    "n": 466,
+    "disease": "HYPERTENSION",
+    "endpoint": "BP_CONTROL",
+    "groups": 3,
+    "method": "Chi-square test",
+    "p": 2.0405588657849848e-07,
+    "cox_rows": 0,
+    "error": null
+  },
+  {
+    "query": "Identify HER2-positive breast cancer patients in the past 4 years and compare survival across treatment regimens",
+    "n": 206,
+    "disease": "BREAST_CANCER",
+    "endpoint": "OS",
+    "groups": 3,
+    "method": "Kaplan-Meier + Log-rank + Cox PH",
+    "p": 1.4053735952528848e-10,
+    "cox_rows": 4,
+    "error": null
+  }
+]
