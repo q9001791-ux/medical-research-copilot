@@ -123,6 +123,19 @@ COPY = {
         "public_demo": "PUBLIC RESEARCH DEMO",
         "lang": "语言",
         "template_note": "公网演示环境中的本地文件型模板不保证跨服务器重启永久保存。",
+        "expand_details": "放大查看",
+        "collapse_details": "收起详情",
+        "expand_data": "放大数据表",
+        "collapse_data": "收起数据表",
+        "expand_chart": "放大分析图",
+        "collapse_chart": "恢复缩略图",
+        "export_chart": "导出分析图 PNG",
+        "export_summary": "导出统计摘要 CSV",
+        "result_focus": "核心分析结果",
+        "result_focus_desc": "系统已完成队列构建与统计计算，以下区域优先呈现最终科研结果。",
+        "compact_hint": "默认缩略显示，点击放大可查看完整内容。",
+        "rows_preview": "缩略预览",
+
     },
     "en": {
         "brand": "Haiyan Analytics",
@@ -215,6 +228,19 @@ COPY = {
         "public_demo": "PUBLIC RESEARCH DEMO",
         "lang": "Language",
         "template_note": "File-based templates in the public demo are not guaranteed to persist across cloud server restarts.",
+        "expand_details": "Expand details",
+        "collapse_details": "Collapse",
+        "expand_data": "Expand data table",
+        "collapse_data": "Collapse data table",
+        "expand_chart": "Enlarge chart",
+        "collapse_chart": "Restore compact chart",
+        "export_chart": "Export chart PNG",
+        "export_summary": "Export summary CSV",
+        "result_focus": "Primary analysis result",
+        "result_focus_desc": "Cohort construction and statistical computation are complete. The final research result is prioritized below.",
+        "compact_hint": "Compact by default. Expand when detailed inspection is needed.",
+        "rows_preview": "Compact preview",
+
     },
 }
 
@@ -270,16 +296,16 @@ st.markdown(
 
     .block-container {
         max-width: 1280px;
-        padding-top:.7rem;
-        padding-bottom:4rem;
+        padding-top:.12rem !important;
+        padding-bottom:3rem;
     }
 
     [data-testid="stSidebar"] { display:none; }
-    [data-testid="stHeader"] {
-        background:rgba(255,255,255,.82);
-        backdrop-filter:blur(12px);
-    }
-    [data-testid="stToolbar"] { visibility:hidden; height:0; }
+    [data-testid="stHeader"] { display:none !important; height:0 !important; }
+    [data-testid="stToolbar"] { display:none !important; height:0 !important; }
+    [data-testid="stDecoration"] { display:none !important; }
+    #MainMenu { visibility:hidden; }
+    footer { visibility:hidden; }
 
     /* Streamlit controls */
     .stButton > button {
@@ -556,6 +582,70 @@ st.markdown(
         line-height:1.65;font-size:.88rem;
     }
 
+    .compact-panel {
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:16px;
+        padding:.82rem 1rem;
+        margin:.25rem 0 .6rem;
+        box-shadow:0 5px 16px rgba(38,63,81,.035);
+    }
+    .compact-note {
+        color:var(--muted);
+        font-size:.75rem;
+        line-height:1.55;
+    }
+    .mini-list {
+        display:flex;
+        flex-wrap:wrap;
+        gap:.42rem;
+        margin-top:.55rem;
+    }
+    .mini-chip {
+        padding:.32rem .52rem;
+        border-radius:8px;
+        background:#F3F8F9;
+        color:#50697A;
+        border:1px solid #E4EEF0;
+        font-size:.72rem;
+    }
+    .result-focus {
+        margin:1.5rem 0 .85rem;
+        padding:1.15rem 1.2rem;
+        border-radius:18px;
+        border:1px solid #CFEAE3;
+        background:
+            radial-gradient(circle at 92% 10%,rgba(31,175,154,.09),transparent 13rem),
+            linear-gradient(135deg,#F5FCFA,#FFFFFF);
+        box-shadow:0 12px 28px rgba(31,94,79,.055);
+    }
+    .result-focus .rf-kicker {
+        color:var(--mint);
+        font-size:.72rem;
+        font-weight:900;
+        letter-spacing:.11em;
+    }
+    .result-focus h2 {
+        color:var(--ink);
+        font-size:1.45rem;
+        margin:.28rem 0 .35rem;
+        letter-spacing:-.025em;
+    }
+    .result-focus p {
+        color:var(--muted);
+        font-size:.83rem;
+        margin:0;
+    }
+    .data-preview-label {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        gap:1rem;
+        color:var(--ink);
+        font-weight:800;
+        margin:.35rem 0 .45rem;
+    }
+
     .template-card {
         background:#fff;border:1px solid var(--line);border-radius:17px;
         padding:1rem 1.1rem;margin-bottom:.75rem;
@@ -602,20 +692,17 @@ agent, qe, se, ts = services()
 # -------------------------------------------------------------------
 # Language + top navigation
 # -------------------------------------------------------------------
-lang_col, _ = st.columns([1, 5])
-with lang_col:
-    language = st.selectbox(
-        "Language / 语言",
-        ["中文", "English"],
-        index=0,
-        label_visibility="collapsed",
-        key="language_top",
-    )
+# Read the previous language selection before rendering the header.
+# The selectbox is placed directly inside the nav row so it does not
+# create an empty strip above the brand.
+language = st.session_state.get("language_top", "中文")
 lang = "zh" if language == "中文" else "en"
 c = COPY[lang]
 
-# Header row: brand + native navigation controls
-brand_col, nav1, nav2, nav3, nav4 = st.columns([5.4, 1, 1.15, 1.15, 1])
+brand_col, nav1, nav2, nav3, nav4, nav_lang = st.columns(
+    [4.65, 1, 1.15, 1.15, 1, 1.05],
+    gap="small",
+)
 with brand_col:
     st.markdown(
         f"""
@@ -646,8 +733,19 @@ with nav3:
 with nav4:
     if st.button(c["about"], use_container_width=True, key="nav_about"):
         goto("about")
+with nav_lang:
+    st.selectbox(
+        "Language / 语言",
+        ["中文", "English"],
+        index=0 if language == "中文" else 1,
+        label_visibility="collapsed",
+        key="language_top",
+    )
 
-st.markdown('<div style="height:.5rem;border-bottom:1px solid #E9EFF3;margin-bottom:.4rem"></div>', unsafe_allow_html=True)
+st.markdown(
+    '<div style="height:.15rem;border-bottom:1px solid #E9EFF3;margin-bottom:.25rem"></div>',
+    unsafe_allow_html=True,
+)
 
 # -------------------------------------------------------------------
 # HOME
@@ -810,23 +908,19 @@ elif st.session_state.page == "analysis":
     existing = ts.list()
     template_names = [c["none"]] + [item["template_name"] for item in existing]
 
-    st.markdown(
-        f"""
-        <div class="project-card">
-            <div class="project-card-title">
-                <span class="tiny-icon">＋</span>
-                {c["workspace_title"]}
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
     col_a, col_b = st.columns([1.15, .85])
     with col_a:
-        example_name = st.selectbox(c["example"], list(EXAMPLES[lang].keys()), key=f"example_{lang}")
+        example_name = st.selectbox(
+            c["example"],
+            list(EXAMPLES[lang].keys()),
+            key=f"example_{lang}",
+        )
     with col_b:
-        selected_template = st.selectbox(c["load_template"], template_names, key=f"tpl_{lang}")
+        selected_template = st.selectbox(
+            c["load_template"],
+            template_names,
+            key=f"tpl_{lang}",
+        )
 
     selected_payload = None
     if selected_template != c["none"]:
@@ -842,7 +936,7 @@ elif st.session_state.page == "analysis":
     query = st.text_area(
         c["question"],
         value=default_query,
-        height=125,
+        height=112,
         help=c["question_hint"],
         key=f"research_question_{lang}_{example_name}_{selected_template}",
     )
@@ -854,125 +948,288 @@ elif st.session_state.page == "analysis":
         key="run_analysis",
     )
 
+    # Compute once, then store everything in session state.
+    # This allows zoom/collapse buttons to rerun Streamlit without losing results.
     if run:
         try:
             plan = agent.plan(query, lang)
-
-            # ---- Stage 1
-            st.markdown(
-                f"""
-                <div class="stage-head">
-                    <div class="stage-no">01</div>
-                    <div><strong>{c["stage1"]}</strong><small>{c["stage1_desc"]}</small></div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            st.markdown('<div class="project-card">', unsafe_allow_html=True)
-            for item in plan.explanation:
-                st.markdown(f"**✓** {html.escape(item)}")
-            with st.expander(c["structured"]):
-                st.json(plan.to_dict())
-            st.markdown("</div>", unsafe_allow_html=True)
-
-            # ---- Stage 2
             df, sql = qe.run(plan.to_dict())
-            st.markdown(
-                f"""
-                <div class="stage-head">
-                    <div class="stage-no">02</div>
-                    <div><strong>{c["stage2"]}</strong><small>{c["stage2_desc"]}</small></div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            m1, m2, m3 = st.columns(3)
-            m1.metric(c["included"], len(df))
-            m2.metric(c["groups"], df["regimen"].nunique() if not df.empty else 0)
-            m3.metric(c["endpoint"], plan.endpoint or "-")
-            with st.expander(c["sql"]):
-                st.code(sql, language="sql")
             if df.empty:
                 st.warning(c["empty"])
                 st.stop()
-            st.markdown(f"**{c['data_preview']}**")
-            st.dataframe(df.head(50), use_container_width=True, hide_index=True)
-
-            # ---- Stage 3
             result = se.analyze(df, plan.to_dict(), lang)
             if "error" in result:
                 st.error(result["error"])
                 st.stop()
 
-            st.markdown(
-                f"""
-                <div class="stage-head">
-                    <div class="stage-no">03</div>
-                    <div><strong>{c["stage3"]}</strong><small>{c["stage3_desc"]}</small></div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-            r1, r2 = st.columns([1.55, .65])
-            r1.metric(c["method"], result["method"])
-            r2.metric(c["p"], f'{result["p"]:.4g}')
+            st.session_state["analysis_payload"] = {
+                "plan": plan.to_dict(),
+                "df": df,
+                "sql": sql,
+                "result": result,
+                "lang": lang,
+                "query": query,
+            }
+            st.session_state["logic_expanded"] = False
+            st.session_state["data_expanded"] = False
+            st.session_state["chart_expanded"] = False
+        except Exception as exc:
+            st.error(f'{c["failed"]}: {exc}')
 
-            chart_col, summary_col = st.columns([1.18, .82], gap="large")
+    payload = st.session_state.get("analysis_payload")
+
+    if payload:
+        plan_data = payload["plan"]
+        df = payload["df"]
+        sql = payload["sql"]
+        result = payload["result"]
+
+        # --------------------------------------------------------------
+        # Stage 1 — compact by default
+        # --------------------------------------------------------------
+        st.markdown(
+            f"""
+            <div class="stage-head">
+                <div class="stage-no">01</div>
+                <div>
+                    <strong>{c["stage1"]}</strong>
+                    <small>{c["stage1_desc"]} · {c["compact_hint"]}</small>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        compact_items = plan_data.get("explanation", [])[:3]
+        chips = "".join(
+            f'<span class="mini-chip">✓ {html.escape(str(item))}</span>'
+            for item in compact_items
+        )
+        st.markdown(
+            f"""
+            <div class="compact-panel">
+                <div class="compact-note">{c["compact_hint"]}</div>
+                <div class="mini-list">{chips}</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        logic_label = (
+            c["collapse_details"]
+            if st.session_state.get("logic_expanded", False)
+            else c["expand_details"]
+        )
+        if st.button(
+            ("↙ " if st.session_state.get("logic_expanded", False) else "↗ ") + logic_label,
+            key="toggle_logic",
+        ):
+            st.session_state["logic_expanded"] = not st.session_state.get("logic_expanded", False)
+            st.rerun()
+
+        if st.session_state.get("logic_expanded", False):
+            for item in plan_data.get("explanation", []):
+                st.markdown(f"**✓** {html.escape(str(item))}")
+            with st.expander(c["structured"], expanded=True):
+                st.json(plan_data)
+
+        # --------------------------------------------------------------
+        # Stage 2 — cohort data is deliberately smaller than final result
+        # --------------------------------------------------------------
+        st.markdown(
+            f"""
+            <div class="stage-head">
+                <div class="stage-no">02</div>
+                <div>
+                    <strong>{c["stage2"]}</strong>
+                    <small>{c["stage2_desc"]} · {c["compact_hint"]}</small>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        m1, m2, m3 = st.columns(3)
+        m1.metric(c["included"], len(df))
+        m2.metric(c["groups"], df["regimen"].nunique() if not df.empty else 0)
+        m3.metric(c["endpoint"], plan_data.get("endpoint") or "-")
+
+        data_expanded = st.session_state.get("data_expanded", False)
+        dlabel = c["collapse_data"] if data_expanded else c["expand_data"]
+
+        data_title_col, data_btn_col = st.columns([4.5, 1.2])
+        with data_title_col:
+            st.markdown(
+                f"**{c['data_preview']}** · {c['rows_preview'] if not data_expanded else ''}"
+            )
+        with data_btn_col:
+            if st.button(
+                ("↙ " if data_expanded else "↗ ") + dlabel,
+                use_container_width=True,
+                key="toggle_data",
+            ):
+                st.session_state["data_expanded"] = not data_expanded
+                st.rerun()
+
+        # 6 rows in compact mode; 50 rows in expanded mode.
+        if data_expanded:
+            st.dataframe(
+                df.head(50),
+                use_container_width=True,
+                hide_index=True,
+                height=520,
+            )
+            with st.expander(c["sql"]):
+                st.code(sql, language="sql")
+        else:
+            st.dataframe(
+                df.head(6),
+                use_container_width=True,
+                hide_index=True,
+                height=245,
+            )
+
+        # --------------------------------------------------------------
+        # Stage 3 — visual priority: final analysis result
+        # --------------------------------------------------------------
+        st.markdown(
+            f"""
+            <div class="result-focus">
+                <div class="rf-kicker">ANALYSIS RESULT</div>
+                <h2>{c["result_focus"]}</h2>
+                <p>{c["result_focus_desc"]}</p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            f"""
+            <div class="stage-head">
+                <div class="stage-no">03</div>
+                <div>
+                    <strong>{c["stage3"]}</strong>
+                    <small>{c["stage3_desc"]}</small>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        r1, r2 = st.columns([1.55, .65])
+        r1.metric(c["method"], result["method"])
+        r2.metric(c["p"], f'{result["p"]:.4g}')
+
+        chart_bytes = base64.b64decode(result["image"])
+        chart_expanded = st.session_state.get("chart_expanded", False)
+
+        chart_actions1, chart_actions2, chart_actions3 = st.columns([1.2, 1.25, 2.6])
+        with chart_actions1:
+            if st.button(
+                ("↙ " if chart_expanded else "↗ ")
+                + (c["collapse_chart"] if chart_expanded else c["expand_chart"]),
+                use_container_width=True,
+                key="toggle_chart",
+            ):
+                st.session_state["chart_expanded"] = not chart_expanded
+                st.rerun()
+        with chart_actions2:
+            st.download_button(
+                "↓ " + c["export_chart"],
+                chart_bytes,
+                file_name="haiyan_analysis_chart.png",
+                mime="image/png",
+                use_container_width=True,
+                key="download_chart_png",
+            )
+
+        if chart_expanded:
+            st.image(chart_bytes, use_container_width=True)
+            st.markdown(f"**{c['summary']}**")
+            st.dataframe(
+                pd.DataFrame(result["summary"]),
+                use_container_width=True,
+                hide_index=True,
+            )
+        else:
+            chart_col, summary_col = st.columns([1.28, .72], gap="large")
             with chart_col:
-                st.image(base64.b64decode(result["image"]), use_container_width=True)
+                st.image(chart_bytes, use_container_width=True)
             with summary_col:
                 st.markdown(f"**{c['summary']}**")
                 st.dataframe(
                     pd.DataFrame(result["summary"]),
                     use_container_width=True,
                     hide_index=True,
+                    height=300,
                 )
 
-            st.markdown(f"**{c['conclusion']}**")
-            st.markdown(
-                f'<div class="insight-box">✦ {html.escape(result["conclusion"])}</div>',
-                unsafe_allow_html=True,
-            )
+        st.markdown(f"**{c['conclusion']}**")
+        st.markdown(
+            f'<div class="insight-box">✦ {html.escape(result["conclusion"])}</div>',
+            unsafe_allow_html=True,
+        )
 
-            if result.get("cox"):
-                st.markdown(f"**{c['cox']}**")
+        if result.get("cox"):
+            with st.expander(c["cox"], expanded=False):
                 st.dataframe(
                     pd.DataFrame(result["cox"]),
                     use_container_width=True,
                     hide_index=True,
                 )
 
+        # Result export area
+        export1, export2 = st.columns(2)
+        with export1:
             st.download_button(
                 c["download"],
                 df.to_csv(index=False).encode("utf-8-sig"),
-                "analysis_data.csv",
+                "haiyan_analysis_data.csv",
                 "text/csv",
                 use_container_width=True,
+                key="download_analysis_csv",
+            )
+        with export2:
+            summary_df = pd.DataFrame(result["summary"])
+            st.download_button(
+                c["export_summary"],
+                summary_df.to_csv(index=False).encode("utf-8-sig"),
+                "haiyan_analysis_summary.csv",
+                "text/csv",
+                use_container_width=True,
+                key="download_summary_csv",
             )
 
-            # ---- Stage 4
-            st.markdown(
-                f"""
-                <div class="stage-head">
-                    <div class="stage-no">04</div>
-                    <div><strong>{c["stage4"]}</strong><small>{c["stage4_desc"]}</small></div>
+        # --------------------------------------------------------------
+        # Stage 4 — compact asset-saving tail
+        # --------------------------------------------------------------
+        st.markdown(
+            f"""
+            <div class="stage-head">
+                <div class="stage-no">04</div>
+                <div>
+                    <strong>{c["stage4"]}</strong>
+                    <small>{c["stage4_desc"]}</small>
                 </div>
-                """,
-                unsafe_allow_html=True,
-            )
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        save_col1, save_col2 = st.columns([1.65, .75])
+        with save_col1:
             template_name = st.text_input(
                 c["template_name"],
-                value=f"{plan.disease or 'research'}_{plan.endpoint or 'analysis'}",
+                value=f"{plan_data.get('disease') or 'research'}_{plan_data.get('endpoint') or 'analysis'}",
                 key="save_template_name",
             )
+        with save_col2:
+            st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
             if st.button(c["save"], use_container_width=True, key="save_template_btn"):
-                path = ts.save(template_name, plan.to_dict(), sql)
+                path = ts.save(template_name, plan_data, sql)
                 st.success(f'{c["saved"]}: {path.name}')
 
-            st.caption(c["template_note"])
-
-        except Exception as exc:
-            st.error(f'{c["failed"]}: {exc}')
+        st.caption(c["template_note"])
 
 # -------------------------------------------------------------------
 # TEMPLATE CENTER
