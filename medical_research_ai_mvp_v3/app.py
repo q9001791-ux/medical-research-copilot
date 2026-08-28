@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import base64
 import html
 import pandas as pd
@@ -130,6 +131,61 @@ COPY = {
         "visual_km": "Kaplan-Meier 生存分析",
         "visual_adjusted": "校正后模型",
         "visual_result": "科研统计结果",
+        "ai_mode": "语义理解模式",
+        "ai_llm": "LLM结构化语义解析 + 确定性校验",
+        "ai_rule": "规则兜底模式（未配置AI密钥）",
+        "ai_fallback": "AI异常，已自动启用规则兜底",
+        "ai_model": "解析模型",
+        "clarification": "需要补充一点研究信息",
+        "understood_but_not_executable": "已理解研究问题，但当前演示数据/算法暂不能直接执行",
+        "assumptions_title": "AI采用的解释/假设",
+        "settings": "设置",
+        "settings_title": "平台设置",
+        "settings_desc": "管理当前访问身份、科研模板、语言、API配置与平台偏好。",
+        "account_section": "账户与访问",
+        "guest_mode": "游客模式",
+        "guest_desc": "当前为演示版访问模式，不需要真实账号即可使用科研分析功能。",
+        "login": "登录",
+        "logged_guest": "目前已使用游客模式登录",
+        "logout_guest": "退出游客模式",
+        "login_note": "演示版暂不接入真实用户认证与账号数据库。",
+        "template_manage": "管理我的科研模板",
+        "template_manage_desc": "查看、重命名或删除当前环境中保存的科研分析模板。",
+        "rename": "重命名",
+        "delete": "删除",
+        "new_name": "新模板名称",
+        "confirm_delete": "确认删除",
+        "template_deleted": "模板已删除",
+        "template_renamed": "模板已重命名",
+        "language_section": "语言与显示",
+        "language_desc": "平台语言统一在此设置。支持中文与 English，切换后全站界面与科研语义说明同步更新。",
+        "api_section": "API 配置",
+        "api_desc": "预留大模型 API 配置入口。当前无需配置即可使用规则解析与演示功能。",
+        "api_status": "API 状态",
+        "api_not_configured": "未配置（当前使用规则/本地解析能力）",
+        "api_configured": "已检测到配置",
+        "api_provider": "模型服务",
+        "api_model": "模型名称",
+        "api_key_placeholder": "API Key（演示占位，不会保存）",
+        "api_save_demo": "保存配置（演示）",
+        "api_demo_saved": "已记录为界面演示状态，本版本不会把 API Key 写入磁盘。",
+        "privacy_section": "数据与隐私",
+        "privacy_desc": "公网演示仅使用程序生成的模拟脱敏数据；真实医院部署时需接入院内身份认证、项目授权、审计和数据访问控制。",
+        "privacy_point1": "患者级数据不用于游客身份识别",
+        "privacy_point2": "当前示例数据库为合成数据，不包含真实患者信息",
+        "privacy_point3": "真实环境建议采用医院内网与项目级权限控制",
+        "system_section": "系统信息",
+        "version": "版本",
+        "version_value": "Haiyan Analysis Demo · V4",
+        "runtime": "运行模式",
+        "runtime_value": "Streamlit Web Application",
+        "data_mode": "数据模式",
+        "data_mode_value": "Synthetic Research Database",
+        "danger_section": "本地数据管理",
+        "danger_desc": "这里仅管理平台内部模板，不会删除你的 Python 环境或项目文件。",
+        "no_saved_templates": "当前没有已保存的科研模板。",
+
+
 
         "expand_details": "放大查看",
         "collapse_details": "收起详情",
@@ -243,6 +299,61 @@ COPY = {
         "visual_km": "Kaplan-Meier survival",
         "visual_adjusted": "Adjusted model",
         "visual_result": "Research result",
+        "ai_mode": "Semantic understanding mode",
+        "ai_llm": "LLM structured parsing + deterministic validation",
+        "ai_rule": "Rule fallback mode (AI key not configured)",
+        "ai_fallback": "AI unavailable; deterministic fallback activated",
+        "ai_model": "Parser model",
+        "clarification": "A little more research information is needed",
+        "understood_but_not_executable": "The question was understood, but the current demo data/algorithm cannot execute it yet",
+        "assumptions_title": "AI interpretation / assumptions",
+        "settings": "Settings",
+        "settings_title": "Platform Settings",
+        "settings_desc": "Manage access identity, research templates, language, API placeholders and platform preferences.",
+        "account_section": "Account & Access",
+        "guest_mode": "Guest mode",
+        "guest_desc": "The demo can be used without a real account or authentication backend.",
+        "login": "Log in",
+        "logged_guest": "Currently logged in using guest mode",
+        "logout_guest": "Exit guest mode",
+        "login_note": "The demo does not connect to a real authentication or account database.",
+        "template_manage": "Manage my research templates",
+        "template_manage_desc": "View, rename or delete research analysis templates saved in the current environment.",
+        "rename": "Rename",
+        "delete": "Delete",
+        "new_name": "New template name",
+        "confirm_delete": "Confirm delete",
+        "template_deleted": "Template deleted",
+        "template_renamed": "Template renamed",
+        "language_section": "Language & Display",
+        "language_desc": "Language is managed here. Switching Chinese / English updates the full interface and research semantic explanations.",
+        "api_section": "API Configuration",
+        "api_desc": "Reserved model API settings. No API is required for the current rule-based/demo functionality.",
+        "api_status": "API status",
+        "api_not_configured": "Not configured (using local/rule parsing)",
+        "api_configured": "Configuration detected",
+        "api_provider": "Model provider",
+        "api_model": "Model name",
+        "api_key_placeholder": "API Key (demo placeholder; not persisted)",
+        "api_save_demo": "Save configuration (demo)",
+        "api_demo_saved": "Saved only as UI demo state. The API key is not written to disk.",
+        "privacy_section": "Data & Privacy",
+        "privacy_desc": "The public demo uses only synthetic de-identified data. Real hospital deployment requires internal authentication, project authorization, auditing and access control.",
+        "privacy_point1": "Patient-level data is not used for guest identity",
+        "privacy_point2": "The demo database is synthetic and contains no real patient records",
+        "privacy_point3": "Production should use hospital-internal project-level access control",
+        "system_section": "System Information",
+        "version": "Version",
+        "version_value": "Haiyan Analysis Demo · V4",
+        "runtime": "Runtime",
+        "runtime_value": "Streamlit Web Application",
+        "data_mode": "Data mode",
+        "data_mode_value": "Synthetic Research Database",
+        "danger_section": "Local Data Management",
+        "danger_desc": "This area manages platform templates only. It does not delete Python or your project files.",
+        "no_saved_templates": "No saved research templates.",
+
+
 
         "expand_details": "Expand details",
         "collapse_details": "Collapse",
@@ -674,6 +785,142 @@ st.markdown(
         background:#fff;border:1px solid var(--line);border-radius:18px;
         padding:1.2rem 1.3rem;margin-bottom:.8rem;
     }
+
+    .settings-grid {
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:.85rem;
+        margin:.85rem 0 1rem;
+    }
+    .settings-card {
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:18px;
+        padding:1.05rem 1.15rem;
+        box-shadow:0 7px 22px rgba(35,60,79,.04);
+    }
+
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        border-color:#E4ECF1 !important;
+        border-radius:18px !important;
+        background:#FFFFFF !important;
+        box-shadow:0 7px 22px rgba(35,60,79,.04);
+    }
+
+    .template-empty-state {
+        min-height:145px;
+        border:1px dashed #DCE7EC;
+        border-radius:14px;
+        background:#FAFCFD;
+        display:flex;
+        flex-direction:column;
+        justify-content:center;
+        align-items:center;
+        text-align:center;
+        padding:1rem;
+    }
+    .template-empty-icon {
+        width:38px;
+        height:38px;
+        border-radius:11px;
+        background:#EAF8F4;
+        color:#1B9F8B;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:1.2rem;
+        font-weight:800;
+        margin-bottom:.55rem;
+    }
+    .template-empty-title {
+        color:#244057;
+        font-size:.84rem;
+        font-weight:800;
+        margin-bottom:.25rem;
+    }
+    .template-empty-sub {
+        color:#8393A2;
+        font-size:.73rem;
+        line-height:1.55;
+        max-width:330px;
+    }
+    .template-mini-row {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        padding:.72rem .78rem;
+        border:1px solid #E6EDF1;
+        background:#FBFDFE;
+        border-radius:12px;
+        margin-bottom:.45rem;
+    }
+    .template-mini-name {
+        color:#203B52;
+        font-size:.82rem;
+        font-weight:800;
+        margin-bottom:.18rem;
+    }
+    .template-mini-meta {
+        color:#8292A0;
+        font-size:.68rem;
+    }
+    .api-note-box {
+        margin-top:.85rem;
+        padding:.78rem .85rem;
+        border-radius:12px;
+        background:#F6FAFB;
+        border:1px solid #E6EEF2;
+    }
+    .api-note-title {
+        color:#3A556B;
+        font-size:.76rem;
+        font-weight:800;
+        margin-bottom:.25rem;
+    }
+    .api-note-text {
+        color:#7A8B99;
+        font-size:.72rem;
+        line-height:1.55;
+    }
+    .settings-card h3 {
+        margin:.05rem 0 .35rem;
+        color:var(--ink);
+        font-size:1rem;
+    }
+    .settings-card p {
+        margin:0;
+        color:var(--muted);
+        font-size:.82rem;
+        line-height:1.65;
+    }
+    .status-pill {
+        display:inline-flex;
+        align-items:center;
+        gap:.35rem;
+        padding:.36rem .6rem;
+        border-radius:999px;
+        background:#EDF9F6;
+        border:1px solid #D4EFE7;
+        color:#188B78;
+        font-size:.73rem;
+        font-weight:800;
+    }
+    .settings-section-title {
+        margin:1.35rem 0 .55rem;
+        font-weight:900;
+        color:var(--ink);
+        font-size:1.05rem;
+    }
+    .template-manage-row {
+        background:#fff;
+        border:1px solid var(--line);
+        border-radius:14px;
+        padding:.8rem .9rem;
+        margin-bottom:.55rem;
+    }
+    @media(max-width:780px){
+        .settings-grid{grid-template-columns:1fr}
+    }
     .about-card h3{margin:0 0 .45rem;font-size:1rem;color:var(--ink)}
     .about-card p{margin:0;color:var(--muted);line-height:1.75;font-size:.88rem}
 
@@ -705,6 +952,9 @@ def services():
 
 agent, qe, se, ts = services()
 
+# The LLM receives only the research question text, never patient-level data.
+AI_ENABLED = bool(getattr(agent, "ai_enabled", False))
+
 # -------------------------------------------------------------------
 # Language + top navigation
 # -------------------------------------------------------------------
@@ -720,8 +970,8 @@ language = st.session_state.get("language_top", "中文")
 lang = "zh" if language == "中文" else "en"
 c = COPY[lang]
 
-brand_col, nav1, nav2, nav3, nav4, nav_lang = st.columns(
-    [4.65, 1, 1.15, 1.15, 1, 1.05],
+brand_col, nav1, nav2, nav3, nav4, nav5 = st.columns(
+    [4.6, .9, 1.05, 1.05, .95, .85],
     gap="small",
 )
 with brand_col:
@@ -754,15 +1004,9 @@ with nav3:
 with nav4:
     if st.button(c["about"], use_container_width=True, key="nav_about"):
         goto("about")
-with nav_lang:
-    st.selectbox(
-        "Language / 语言",
-        ["中文", "English"],
-        index=0 if language == "中文" else 1,
-        label_visibility="collapsed",
-        key="language_top",
-        on_change=sync_language,
-    )
+with nav5:
+    if st.button("⚙ " + c["settings"], use_container_width=True, key="nav_settings"):
+        goto("settings")
 
 st.markdown(
     '<div style="height:.15rem;border-bottom:1px solid #E9EFF3;margin-bottom:.25rem"></div>',
@@ -981,10 +1225,51 @@ elif st.session_state.page == "analysis":
     if run:
         try:
             plan = agent.plan(query, lang)
+
+            # Show the semantic interpretation mode before any database execution.
+            if plan.parser_mode == "llm_structured_output":
+                st.success(
+                    f'✦ {c["ai_mode"]}: {c["ai_llm"]}'
+                    + (f' · {c["ai_model"]}: {plan.parser_model}' if plan.parser_model else "")
+                )
+            elif plan.parser_mode == "rule_fallback_api_error":
+                st.warning(f'↻ {c["ai_mode"]}: {c["ai_fallback"]}')
+            else:
+                st.info(f'◌ {c["ai_mode"]}: {c["ai_rule"]}')
+
+            # If the LLM correctly decides that a genuinely important detail is
+            # missing, ask one concise clarification instead of inventing it.
+            if plan.clarification_needed:
+                st.warning(
+                    f'**{c["clarification"]}**\n\n'
+                    + (plan.clarification_question or "")
+                )
+                with st.expander(c["structured"]):
+                    st.json(plan.to_dict())
+                st.stop()
+
+            # Semantic understanding may be broader than the current synthetic
+            # database. Show that explicitly rather than pretending the data exist.
+            if not plan.executable:
+                st.warning(
+                    f'**{c["understood_but_not_executable"]}**\n\n'
+                    + (plan.execution_warning or "")
+                )
+                for item in plan.explanation:
+                    st.write("•", item)
+                if plan.assumptions:
+                    st.markdown(f'**{c["assumptions_title"]}**')
+                    for item in plan.assumptions:
+                        st.write("•", item)
+                with st.expander(c["structured"]):
+                    st.json(plan.to_dict())
+                st.stop()
+
             df, sql = qe.run(plan.to_dict())
             if df.empty:
                 st.warning(c["empty"])
                 st.stop()
+
             result = se.analyze(df, plan.to_dict(), lang)
             if "error" in result:
                 st.error(result["error"])
@@ -1028,6 +1313,18 @@ elif st.session_state.page == "analysis":
             unsafe_allow_html=True,
         )
 
+        parser_mode = plan_data.get("parser_mode", "rule")
+        parser_model = plan_data.get("parser_model")
+        if parser_mode == "llm_structured_output":
+            st.caption(
+                f'✦ {c["ai_mode"]}: {c["ai_llm"]}'
+                + (f' · {parser_model}' if parser_model else "")
+            )
+        elif parser_mode == "rule_fallback_api_error":
+            st.caption(f'↻ {c["ai_mode"]}: {c["ai_fallback"]}')
+        else:
+            st.caption(f'◌ {c["ai_mode"]}: {c["ai_rule"]}')
+
         compact_items = plan_data.get("explanation", [])[:3]
         chips = "".join(
             f'<span class="mini-chip">✓ {html.escape(str(item))}</span>'
@@ -1058,6 +1355,10 @@ elif st.session_state.page == "analysis":
         if st.session_state.get("logic_expanded", False):
             for item in plan_data.get("explanation", []):
                 st.markdown(f"**✓** {html.escape(str(item))}")
+            if plan_data.get("assumptions"):
+                st.markdown(f'**{c["assumptions_title"]}**')
+                for item in plan_data.get("assumptions", []):
+                    st.write("•", item)
             with st.expander(c["structured"], expanded=True):
                 st.json(plan_data)
 
@@ -1295,7 +1596,7 @@ elif st.session_state.page == "templates":
 # -------------------------------------------------------------------
 # ABOUT
 # -------------------------------------------------------------------
-else:
+elif st.session_state.page == "about":
     st.markdown(
         f"""
         <div class="workspace-head">
@@ -1312,6 +1613,365 @@ else:
         <div class="about-card">
             <h3>{c["safety_title"]}</h3>
             <p>{c["safety_desc"]}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+# -------------------------------------------------------------------
+# SETTINGS
+# -------------------------------------------------------------------
+elif st.session_state.page == "settings":
+    st.markdown(
+        f"""
+        <div class="workspace-head">
+            <div class="wk">PLATFORM SETTINGS</div>
+            <h1>{c["settings_title"]}</h1>
+            <p>{c["settings_desc"]}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    # --------------------------------------------------------------
+    # Account / guest mode
+    # --------------------------------------------------------------
+    if "guest_logged_in" not in st.session_state:
+        st.session_state["guest_logged_in"] = False
+
+    st.markdown(f'<div class="settings-section-title">{c["account_section"]}</div>', unsafe_allow_html=True)
+    account_left, account_right = st.columns([1.7, .8])
+
+    with account_left:
+        guest_status = (
+            c["logged_guest"]
+            if st.session_state["guest_logged_in"]
+            else c["guest_desc"]
+        )
+        st.markdown(
+            f"""
+            <div class="settings-card">
+                <h3>👤 {c["guest_mode"]}</h3>
+                <p>{guest_status}</p>
+                <div style="margin-top:.7rem">
+                    <span class="status-pill">● {c["guest_mode"]}</span>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with account_right:
+        st.markdown("<div style='height:.35rem'></div>", unsafe_allow_html=True)
+        if not st.session_state["guest_logged_in"]:
+            if st.button(
+                c["login"],
+                type="primary",
+                use_container_width=True,
+                key="guest_login_btn",
+            ):
+                st.session_state["guest_logged_in"] = True
+                st.rerun()
+        else:
+            st.success(c["logged_guest"])
+            if st.button(
+                c["logout_guest"],
+                use_container_width=True,
+                key="guest_logout_btn",
+            ):
+                st.session_state["guest_logged_in"] = False
+                st.rerun()
+        st.caption(c["login_note"])
+
+    # --------------------------------------------------------------
+    # Language / Template management / API
+    # --------------------------------------------------------------
+    st.markdown(
+        f'<div class="settings-section-title">{c["language_section"]}</div>',
+        unsafe_allow_html=True,
+    )
+
+    left_settings, right_settings = st.columns([1, 1], gap="large")
+
+    # ==============================================================
+    # LEFT COLUMN: Language + Research Templates
+    # ==============================================================
+    with left_settings:
+        # ---------------- Language card ----------------
+        with st.container(border=True):
+            st.markdown(
+                f"""
+                <div style="margin-bottom:.75rem">
+                    <div style="font-size:1rem;font-weight:850;color:#10243E;margin-bottom:.35rem">
+                        🌐 {c["language_section"]}
+                    </div>
+                    <div style="font-size:.82rem;line-height:1.65;color:#708196">
+                        {c["language_desc"]}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            current_language = st.session_state.get("language_top", "中文")
+            settings_language = st.selectbox(
+                c["language_section"],
+                ["中文", "English"],
+                index=0 if current_language == "中文" else 1,
+                key="settings_language_choice",
+                label_visibility="collapsed",
+            )
+
+            if settings_language != current_language:
+                st.session_state["language_top"] = settings_language
+                st.rerun()
+
+            lang_status = (
+                "当前语言：中文"
+                if settings_language == "中文" and lang == "zh"
+                else (
+                    "Current language: English"
+                    if settings_language == "English" and lang == "en"
+                    else settings_language
+                )
+            )
+            st.caption("● " + lang_status)
+
+        # ---------------- Template management compact card ----------------
+        st.markdown("<div style='height:.65rem'></div>", unsafe_allow_html=True)
+
+        with st.container(border=True):
+            st.markdown(
+                f"""
+                <div style="margin-bottom:.7rem">
+                    <div style="font-size:1rem;font-weight:850;color:#10243E;margin-bottom:.35rem">
+                        🗂 {c["template_manage"]}
+                    </div>
+                    <div style="font-size:.82rem;line-height:1.65;color:#708196">
+                        {c["template_manage_desc"]}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            managed_templates = ts.list()
+
+            if not managed_templates:
+                st.markdown(
+                    f"""
+                    <div class="template-empty-state">
+                        <div class="template-empty-icon">＋</div>
+                        <div class="template-empty-title">{c["no_saved_templates"]}</div>
+                        <div class="template-empty-sub">
+                            {'完成一次科研分析并保存后，模板会显示在这里。' if lang == 'zh' else 'Saved analysis templates will appear here after you complete and save a research analysis.'}
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+            else:
+                # Show up to the latest 3 templates in compact mode.
+                for idx, item in enumerate(reversed(managed_templates[-3:])):
+                    file_name = item.get("_file_name", "")
+                    template_name = item.get("template_name", "Unnamed")
+                    created_at = item.get("created_at", "-")
+                    question = item.get("plan", {}).get("original_query", "-")
+
+                    st.markdown(
+                        f"""
+                        <div class="template-mini-row">
+                            <div class="template-mini-main">
+                                <div class="template-mini-name">{html.escape(str(template_name))}</div>
+                                <div class="template-mini-meta">
+                                    {c["created"]}: {html.escape(str(created_at))}
+                                </div>
+                            </div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True,
+                    )
+
+                    with st.expander(
+                        f'{c["template_manage"]} · {template_name}',
+                        expanded=False,
+                    ):
+                        st.caption(
+                            f'{c["original_q"]}: {question}'
+                        )
+
+                        rename_col, delete_col = st.columns([1.55, .75])
+
+                        with rename_col:
+                            new_name = st.text_input(
+                                c["new_name"],
+                                value=str(template_name),
+                                key=f"rename_template_compact_{idx}",
+                            )
+                            if st.button(
+                                c["rename"],
+                                key=f"rename_btn_compact_{idx}",
+                                use_container_width=True,
+                            ):
+                                try:
+                                    ts.rename(file_name, new_name)
+                                    st.success(c["template_renamed"])
+                                    st.rerun()
+                                except Exception as exc:
+                                    st.error(str(exc))
+
+                        with delete_col:
+                            confirm = st.checkbox(
+                                c["confirm_delete"],
+                                key=f"confirm_delete_compact_{idx}",
+                            )
+                            if st.button(
+                                c["delete"],
+                                key=f"delete_template_compact_{idx}",
+                                disabled=not confirm,
+                                use_container_width=True,
+                            ):
+                                if ts.delete(file_name):
+                                    st.success(c["template_deleted"])
+                                    st.rerun()
+
+                if len(managed_templates) > 3:
+                    st.caption(
+                        (
+                            f"当前共保存 {len(managed_templates)} 个模板，这里显示最近 3 个。"
+                            if lang == "zh"
+                            else f"{len(managed_templates)} templates saved; showing the 3 most recent."
+                        )
+                    )
+
+    # ==============================================================
+    # RIGHT COLUMN: API configuration
+    # ==============================================================
+    with right_settings:
+        with st.container(border=True):
+            api_detected = bool(os.getenv("OPENAI_API_KEY"))
+            api_status_text = (
+                c["api_configured"]
+                if api_detected
+                else c["api_not_configured"]
+            )
+
+            st.markdown(
+                f"""
+                <div style="margin-bottom:.7rem">
+                    <div style="font-size:1rem;font-weight:850;color:#10243E;margin-bottom:.35rem">
+                        ⌘ {c["api_section"]}
+                    </div>
+                    <div style="font-size:.82rem;line-height:1.65;color:#708196">
+                        {c["api_desc"]}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            st.caption("● " + api_status_text)
+
+            provider = st.selectbox(
+                c["api_provider"],
+                ["OpenAI", "Other / Custom"],
+                key="settings_api_provider",
+            )
+
+            model_name = st.text_input(
+                c["api_model"],
+                value=st.session_state.get(
+                    "api_demo_model",
+                    "gpt-5.6-luna",
+                ),
+                key="settings_api_model",
+            )
+
+            demo_key = st.text_input(
+                c["api_key_placeholder"],
+                value="",
+                type="password",
+                key="settings_api_key_demo",
+                placeholder="sk-••••••••••••••••",
+            )
+
+            if st.button(
+                c["api_save_demo"],
+                key="settings_api_save_demo",
+                type="primary",
+                use_container_width=True,
+            ):
+                # Interface demonstration only.
+                # Credentials are deliberately not persisted.
+                st.session_state["api_demo_provider"] = provider
+                st.session_state["api_demo_model"] = model_name
+                st.session_state["api_demo_key_entered"] = bool(demo_key)
+                st.success(c["api_demo_saved"])
+
+            st.markdown(
+                f"""
+                <div class="api-note-box">
+                    <div class="api-note-title">
+                        {'配置说明' if lang == 'zh' else 'Configuration note'}
+                    </div>
+                    <div class="api-note-text">
+                        {
+                            '当前入口用于展示平台的模型配置能力。未配置 API 时，平台仍可使用本地规则解析与现有演示功能。'
+                            if lang == 'zh'
+                            else
+                            'This panel demonstrates model configuration. Without an API, the platform continues to use local rule parsing and existing demo functions.'
+                        }
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+    # --------------------------------------------------------------
+    # Privacy + system
+    # --------------------------------------------------------------
+    st.markdown(f'<div class="settings-section-title">{c["privacy_section"]}</div>', unsafe_allow_html=True)
+
+    privacy_col, system_col = st.columns(2)
+
+    with privacy_col:
+        st.markdown(
+            f"""
+            <div class="settings-card">
+                <h3>🔒 {c["privacy_section"]}</h3>
+                <p>{c["privacy_desc"]}</p>
+                <div class="mini-list" style="margin-top:.8rem">
+                    <span class="mini-chip">✓ {c["privacy_point1"]}</span>
+                    <span class="mini-chip">✓ {c["privacy_point2"]}</span>
+                    <span class="mini-chip">✓ {c["privacy_point3"]}</span>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    with system_col:
+        st.markdown(
+            f"""
+            <div class="settings-card">
+                <h3>◫ {c["system_section"]}</h3>
+                <p>
+                    <strong>{c["version"]}:</strong> {c["version_value"]}<br>
+                    <strong>{c["runtime"]}:</strong> {c["runtime_value"]}<br>
+                    <strong>{c["data_mode"]}:</strong> {c["data_mode_value"]}
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+    st.markdown(f'<div class="settings-section-title">{c["danger_section"]}</div>', unsafe_allow_html=True)
+    st.markdown(
+        f"""
+        <div class="about-card">
+            <h3>🗂 {c["danger_section"]}</h3>
+            <p>{c["danger_desc"]}</p>
         </div>
         """,
         unsafe_allow_html=True,
