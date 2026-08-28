@@ -1098,13 +1098,14 @@ st.markdown(
     }
     .preview-head strong {font-size:.9rem;color:#19374E}
     .analysis-command {
-        border:1px solid #CDE9E2;
+        border:1px solid #C7E4DC;
         border-radius:19px;
-        padding:1rem 1.05rem;
+        padding:1.05rem 1.1rem;
         background:
-            radial-gradient(circle at 95% 5%,rgba(31,175,154,.09),transparent 11rem),
-            linear-gradient(135deg,#F7FCFA,#FFFFFF);
-        margin:1rem 0;
+            radial-gradient(circle at 95% 5%,rgba(31,175,154,.10),transparent 11rem),
+            linear-gradient(135deg,#F5FBF9,#FFFFFF);
+        margin:1rem 0 .7rem;
+        box-shadow:0 8px 22px rgba(39,89,76,.04);
     }
     .analysis-command .kicker {
         color:#1BA48F;font-size:.68rem;font-weight:900;letter-spacing:.1em;
@@ -1114,6 +1115,71 @@ st.markdown(
     }
     .analysis-command p {
         color:#778A98;font-size:.74rem;line-height:1.6;margin:0 0 .6rem;
+    }
+
+    .analysis-command-grid {
+        display:grid;
+        grid-template-columns:minmax(0,1.15fr) minmax(330px,.85fr);
+        gap:1rem;
+        align-items:stretch;
+    }
+    .analysis-command-examples {
+        border:1px solid #DFEBE7;
+        border-radius:14px;
+        background:rgba(255,255,255,.78);
+        padding:.72rem .78rem;
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:.42rem;
+        align-content:center;
+    }
+    .analysis-command-examples-title {
+        grid-column:1 / -1;
+        color:#67808D;
+        font-size:.66rem;
+        font-weight:800;
+        margin-bottom:.08rem;
+    }
+    .analysis-example-chip {
+        border:1px solid #E2ECE8;
+        border-radius:9px;
+        background:#F8FBFA;
+        padding:.42rem .48rem;
+        color:#516B78;
+        font-size:.65rem;
+        line-height:1.38;
+        min-height:46px;
+        display:flex;
+        align-items:center;
+    }
+
+    /* Stronger contrast for the main research-instruction textarea */
+    textarea[aria-label="分析指令 / 研究问题"],
+    textarea[aria-label="Analysis instruction / research question"] {
+        background:#EEF3F6 !important;
+        border:1px solid #C5D2DA !important;
+        color:#20384A !important;
+        box-shadow:inset 0 1px 2px rgba(31,55,72,.04) !important;
+        min-height:150px !important;
+    }
+
+    textarea[aria-label="分析指令 / 研究问题"]::placeholder,
+    textarea[aria-label="Analysis instruction / research question"]::placeholder {
+        color:#687A87 !important;
+        opacity:1 !important;
+    }
+
+    textarea[aria-label="分析指令 / 研究问题"]:focus,
+    textarea[aria-label="Analysis instruction / research question"]:focus {
+        background:#FFFFFF !important;
+        border-color:#20AB96 !important;
+        box-shadow:0 0 0 3px rgba(32,171,150,.11) !important;
+        outline:none !important;
+    }
+
+    @media(max-width:900px){
+        .analysis-command-grid{grid-template-columns:1fr}
+        .analysis-command-examples{grid-template-columns:repeat(2,1fr)}
     }
     .method-card {
         border:1px solid #DFE9ED;
@@ -2431,34 +2497,29 @@ elif st.session_state.page == "analysis":
     # It remains visible even before a dataset is available so users
     # may paste a table directly into the instruction.
     # ================================================================
-    st.markdown(
+    st.html(
         f"""
         <div class="analysis-command">
-            <div class="kicker">02 · ANALYSIS INSTRUCTION</div>
-            <h3>{c["instruction_title"]}</h3>
-            <p>{c["instruction_desc"]}</p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+            <div class="analysis-command-grid">
+                <div>
+                    <div class="kicker">02 · ANALYSIS INSTRUCTION</div>
+                    <h3>{c["instruction_title"]}</h3>
+                    <p>{c["instruction_desc"]}</p>
+                </div>
 
-    example_texts = [
-        c["instruction_example_1"],
-        c["instruction_example_2"],
-        c["instruction_example_3"],
-        c["instruction_example_4"],
-    ]
-    ex1, ex2, ex3, ex4 = st.columns(4)
-    for i, (col, example) in enumerate(zip([ex1, ex2, ex3, ex4], example_texts), start=1):
-        with col:
-            if st.button(
-                f"{i}. " + (example[:32] + "…" if len(example) > 32 else example),
-                use_container_width=True,
-                key=f"workspace_example_{i}_{lang}",
-                help=example,
-            ):
-                st.session_state["workspace_question"] = example
-                st.rerun()
+                <div class="analysis-command-examples">
+                    <div class="analysis-command-examples-title">
+                        {"示例指令" if lang == "zh" else "Example prompts"}
+                    </div>
+                    <div class="analysis-example-chip">① {c["instruction_example_1"]}</div>
+                    <div class="analysis-example-chip">② {c["instruction_example_2"]}</div>
+                    <div class="analysis-example-chip">③ {c["instruction_example_3"]}</div>
+                    <div class="analysis-example-chip">④ {c["instruction_example_4"]}</div>
+                </div>
+            </div>
+        </div>
+        """
+    )
 
     if "workspace_question" not in st.session_state:
         st.session_state["workspace_question"] = ""
@@ -2466,7 +2527,7 @@ elif st.session_state.page == "analysis":
     research_question = st.text_area(
         c["instruction_label"],
         key="workspace_question",
-        height=132,
+        height=150,
         placeholder=c["custom_question_hint"],
         label_visibility="collapsed",
     )
