@@ -10,6 +10,7 @@ from research_agent import ResearchAgent
 from query_engine import QueryEngine
 from stats_engine import StatsEngine
 from template_store import TemplateStore
+from custom_data_engine import CustomDataEngine, METHODS, method_label, PLATFORM_DATASETS
 
 # -------------------------------------------------------------------
 # App bootstrap
@@ -199,6 +200,113 @@ COPY = {
         "result_focus_desc": "系统已完成队列构建与统计计算，以下区域优先呈现最终科研结果。",
         "compact_hint": "默认缩略显示，点击放大可查看完整内容。",
         "rows_preview": "缩略预览",
+        "data_source": "数据来源",
+        "source_demo": "平台示例数据库",
+        "source_custom": "导入 / 粘贴我的数据",
+        "import_stage": "00 · 导入研究数据",
+        "import_desc": "上传 CSV/XLS/XLSX，直接粘贴 CSV/TSV，或把表格内容连同研究问题一起输入。",
+        "upload_data": "上传数据文件",
+        "paste_data": "粘贴表格数据",
+        "paste_placeholder": "例如：\ngroup,outcome,age\nA,7.2,61\nB,6.5,58",
+        "format_rules": "数据模板与格式要求",
+        "format_rule_1": "第一行为变量名，变量名必须非空且建议唯一；不要使用合并单元格。",
+        "format_rule_2": "一行代表一个观察对象/患者，一列代表一个变量。",
+        "format_rule_3": "连续变量只填数字，不要把单位写入单元格；缺失值留空或使用 NA。",
+        "format_rule_4": "二分类变量建议使用 0/1；生存分析 event 建议 1=事件发生、0=删失。",
+        "format_rule_5": "日期推荐 YYYY-MM-DD；分类标签前后保持一致。",
+        "format_rule_6": "公网演示不要上传姓名、身份证、住院号、电话等可识别真实患者的信息。",
+        "supported_files": "支持格式：CSV、XLS、XLSX；演示版建议 ≤20MB，≤100,000行。",
+        "download_template": "下载数据模板",
+        "template_group_numeric": "两/多组连续变量模板",
+        "template_survival": "生存分析模板",
+        "template_binary": "分类结局模板",
+        "data_loaded": "数据已载入",
+        "rows": "行数",
+        "columns": "变量数",
+        "missing_rate": "缺失率",
+        "numeric_count": "连续/数值变量",
+        "categorical_count": "分类变量",
+        "custom_question_hint": "例如：比较 treatment 两组的 outcome 是否有差异，使用 Mann-Whitney；或用 time/event 按 group 做 Kaplan-Meier。也可以把CSV/TSV表格直接粘到这个研究问题框中。",
+        "analysis_method": "统计分析方法",
+        "auto_recommend": "系统推荐",
+        "group_variable": "分组变量",
+        "outcome_variable": "结局 / 因变量",
+        "x_variable": "变量 X / 治疗前",
+        "y_variable": "变量 Y / 治疗后",
+        "time_variable": "时间变量",
+        "event_variable": "事件变量（1=事件，0=删失）",
+        "predictors": "自变量 / 协变量",
+        "variable_config": "变量角色确认",
+        "custom_run": "生成自助分析报告",
+        "custom_result": "自助数据分析结果",
+        "report_export": "导出完整分析报告 HTML",
+        "data_quality": "数据质量概览",
+        "embedded_data_detected": "已从研究问题中识别出表格数据。",
+        "need_custom_data": "请先上传、粘贴数据，或在研究问题中附上 CSV/TSV 表格。",
+        "result_integrity": "科研完整性说明：你可以写希望回答的问题，但平台会依据实际数据生成结论，不会为了符合预设结论而修改统计结果。",
+        "preview_format": "模板预览",
+        "no_group": "不分组",
+        "instruction_stage": "01 · 输入分析指令",
+        "instruction_title": "告诉海研分析你想回答什么问题",
+        "instruction_desc": "用自然语言描述研究目的、需要比较的变量、希望使用的统计方法或需要校正的因素。无需固定句式。",
+        "instruction_label": "分析指令 / 研究问题",
+        "instruction_example_title": "可以这样写",
+        "instruction_example_1": "比较 treatment A/B 两组的 outcome 是否有差异，使用 Mann-Whitney U 检验。",
+        "instruction_example_2": "按 group 比较 time/event 的生存情况，生成 Kaplan-Meier 曲线并做 Log-rank 检验。",
+        "instruction_example_3": "分析 age 和 score 的相关性，使用 Spearman；同时给出相关系数和 P 值。",
+        "instruction_example_4": "以 outcome 为二分类结局，使用 age、sex、BMI 做 Logistic 回归。",
+        "instruction_empty_hint": "如果暂时不填写，系统仍可根据数据结构进行基础推荐；填写后推荐会更准确。",
+        "unified_source_title": "选择研究数据",
+        "unified_source_desc": "平台数据库、上传文件和粘贴数据使用同一套分析流程。",
+        "platform_dataset": "平台科研数据库",
+        "choose_platform_dataset": "选择平台数据集",
+        "my_data": "导入自己的数据",
+        "current_source": "当前数据来源",
+        "source_platform": "平台数据库",
+        "source_upload": "上传文件",
+        "source_paste": "粘贴数据",
+        "source_embedded": "指令内嵌数据",
+        "available_fields": "可分析字段",
+        "data_preview_title": "研究数据预览",
+        "expand_preview": "展开数据",
+        "collapse_preview": "收起数据",
+        "step_method": "统计策略",
+        "step_variables": "变量配置",
+        "recommended_method": "推荐方法",
+        "run_analysis_now": "开始计算并生成报告",
+        "report_center": "科研分析结果",
+        "report_center_desc": "以下结论由当前数据与统计方法直接计算生成。",
+        "import_dialog_title": "导入研究数据",
+        "import_project_name": "项目名称",
+        "import_project_background": "项目背景",
+        "import_project_summary": "项目概要",
+        "import_project_name_ph": "例如：乳腺癌术后疗效比较",
+        "import_background_ph": "简要说明研究背景、数据来源或研究目的（可选）",
+        "import_summary_ph": "简要说明主要变量、研究设计或希望分析的内容（可选）",
+        "open_import_dialog": "导入我的数据",
+        "reimport_data": "重新导入",
+        "clear_import": "移除数据",
+        "confirm_import": "确认导入",
+        "cancel_import": "取消",
+        "import_success": "研究数据已成功导入",
+        "file_required": "请上传文件或粘贴表格数据后再确认。",
+        "project_name_required": "请填写项目名称。",
+        "template_preview": "数据格式示意",
+        "template_general": "通用分组",
+        "template_survival_short": "生存分析",
+        "template_binary_short": "分类结局",
+        "template_instruction": "第一行为变量名，从第二行开始为数据。变量名不要合并单元格，也不要为空。",
+        "imported_project": "已导入项目",
+        "use_platform_dataset": "使用此平台数据",
+        "platform_active": "当前使用平台数据",
+        "import_active": "当前使用导入数据",
+        "no_import_yet": "尚未导入自己的研究数据",
+        "import_card_desc": "从本地上传 CSV / XLS / XLSX，或粘贴 CSV / TSV。导入过程将在独立窗口中完成。",
+        "platform_card_desc": "选择平台内置的模拟科研数据，再自由输入你自己的研究问题和统计方法。",
+
+
+
+
 
     },
     "en": {
@@ -367,6 +475,113 @@ COPY = {
         "result_focus_desc": "Cohort construction and statistical computation are complete. The final research result is prioritized below.",
         "compact_hint": "Compact by default. Expand when detailed inspection is needed.",
         "rows_preview": "Compact preview",
+        "data_source": "Data source",
+        "source_demo": "Built-in demo database",
+        "source_custom": "Import / paste my data",
+        "import_stage": "00 · Import research data",
+        "import_desc": "Upload CSV/XLS/XLSX, paste CSV/TSV directly, or include a delimited table inside the research question.",
+        "upload_data": "Upload data file",
+        "paste_data": "Paste tabular data",
+        "paste_placeholder": "Example:\ngroup,outcome,age\nA,7.2,61\nB,6.5,58",
+        "format_rules": "Data template & format requirements",
+        "format_rule_1": "The first row must contain non-empty variable names; use unique names and no merged cells.",
+        "format_rule_2": "One row = one observation/patient; one column = one variable.",
+        "format_rule_3": "Numeric variables should contain numbers only; keep units out of cells. Leave missing values blank or use NA.",
+        "format_rule_4": "Binary variables should preferably use 0/1; for survival analysis, event should preferably be 1=event and 0=censored.",
+        "format_rule_5": "Use YYYY-MM-DD for dates and keep categorical labels consistent.",
+        "format_rule_6": "Do not upload identifiable real-patient data to the public demo (names, IDs, phone numbers, etc.).",
+        "supported_files": "Supported: CSV, XLS, XLSX. Demo recommendation: ≤20MB and ≤100,000 rows.",
+        "download_template": "Download data template",
+        "template_group_numeric": "Grouped numeric template",
+        "template_survival": "Survival template",
+        "template_binary": "Categorical outcome template",
+        "data_loaded": "Data loaded",
+        "rows": "Rows",
+        "columns": "Variables",
+        "missing_rate": "Missing rate",
+        "numeric_count": "Numeric variables",
+        "categorical_count": "Categorical variables",
+        "custom_question_hint": "Example: compare outcome across treatment groups using Mann-Whitney; or use time/event grouped by group for Kaplan-Meier. CSV/TSV data may also be pasted directly into this question box.",
+        "analysis_method": "Statistical method",
+        "auto_recommend": "Recommended",
+        "group_variable": "Group variable",
+        "outcome_variable": "Outcome / dependent variable",
+        "x_variable": "Variable X / pre-treatment",
+        "y_variable": "Variable Y / post-treatment",
+        "time_variable": "Time variable",
+        "event_variable": "Event variable (1=event, 0=censored)",
+        "predictors": "Predictors / covariates",
+        "variable_config": "Confirm variable roles",
+        "custom_run": "Generate self-service analysis report",
+        "custom_result": "Self-service analysis result",
+        "report_export": "Export full HTML analysis report",
+        "data_quality": "Data quality overview",
+        "embedded_data_detected": "Tabular data was detected inside the research question.",
+        "need_custom_data": "Upload or paste data first, or include a CSV/TSV table in the research question.",
+        "result_integrity": "Research integrity: you may state the question you hope to answer, but conclusions are computed from the actual data and will not be altered to match a preferred result.",
+        "preview_format": "Template preview",
+        "no_group": "No grouping",
+        "instruction_stage": "01 · Enter analysis instruction",
+        "instruction_title": "Tell Haiyan Analysis what you want to answer",
+        "instruction_desc": "Describe the research objective, variables to compare, preferred statistical method, and covariates in natural language. No fixed command grammar is required.",
+        "instruction_label": "Analysis instruction / research question",
+        "instruction_example_title": "Examples",
+        "instruction_example_1": "Compare outcome between treatment A and B using the Mann-Whitney U test.",
+        "instruction_example_2": "Compare survival by group using time/event, generate Kaplan-Meier curves and perform a Log-rank test.",
+        "instruction_example_3": "Assess the correlation between age and score using Spearman and report the coefficient and P value.",
+        "instruction_example_4": "Use outcome as a binary endpoint and run logistic regression with age, sex and BMI.",
+        "instruction_empty_hint": "If left blank, the platform can still make a basic recommendation from the data structure; adding an instruction improves the recommendation.",
+        "unified_source_title": "Choose research data",
+        "unified_source_desc": "Platform datasets, file uploads and pasted data share one analysis workflow.",
+        "platform_dataset": "Platform research database",
+        "choose_platform_dataset": "Select platform dataset",
+        "my_data": "Import my own data",
+        "current_source": "Current data source",
+        "source_platform": "Platform database",
+        "source_upload": "Uploaded file",
+        "source_paste": "Pasted data",
+        "source_embedded": "Data embedded in instruction",
+        "available_fields": "Available variables",
+        "data_preview_title": "Research data preview",
+        "expand_preview": "Expand data",
+        "collapse_preview": "Collapse data",
+        "step_method": "Statistical strategy",
+        "step_variables": "Variable configuration",
+        "recommended_method": "Recommended method",
+        "run_analysis_now": "Run analysis and generate report",
+        "report_center": "Research analysis result",
+        "report_center_desc": "The following findings are computed directly from the current data and selected statistical method.",
+        "import_dialog_title": "Import Research Data",
+        "import_project_name": "Project name",
+        "import_project_background": "Project background",
+        "import_project_summary": "Project summary",
+        "import_project_name_ph": "Example: Postoperative breast cancer effectiveness comparison",
+        "import_background_ph": "Briefly describe the study background, data source or objective (optional)",
+        "import_summary_ph": "Briefly describe key variables, design or intended analysis (optional)",
+        "open_import_dialog": "Import my data",
+        "reimport_data": "Re-import",
+        "clear_import": "Remove data",
+        "confirm_import": "Confirm import",
+        "cancel_import": "Cancel",
+        "import_success": "Research data imported successfully",
+        "file_required": "Upload a file or paste tabular data before confirming.",
+        "project_name_required": "Enter a project name.",
+        "template_preview": "Data format example",
+        "template_general": "Grouped numeric",
+        "template_survival_short": "Survival",
+        "template_binary_short": "Categorical outcome",
+        "template_instruction": "The first row contains variable names and data begin on row two. Do not merge header cells or leave variable names blank.",
+        "imported_project": "Imported project",
+        "use_platform_dataset": "Use this platform dataset",
+        "platform_active": "Platform dataset active",
+        "import_active": "Imported data active",
+        "no_import_yet": "No personal research data imported yet",
+        "import_card_desc": "Upload CSV / XLS / XLSX or paste CSV / TSV. Import is completed in a dedicated modal window.",
+        "platform_card_desc": "Choose a built-in synthetic research dataset, then ask your own research question and select your preferred statistical method.",
+
+
+
+
 
     },
 }
@@ -736,6 +951,469 @@ st.markdown(
         border:1px solid #E4EEF0;
         font-size:.72rem;
     }
+    .import-panel {
+        border:1px solid #DCEAE6;
+        background:linear-gradient(135deg,#FAFDFC,#FFFFFF);
+        border-radius:18px;
+        padding:1.05rem 1.15rem;
+        margin:.65rem 0 .9rem;
+        box-shadow:0 8px 24px rgba(35,75,65,.04);
+    }
+    .format-box {
+        border:1px solid #E3EBF0;
+        background:#FBFDFE;
+        border-radius:15px;
+        padding:.95rem 1rem;
+        min-height:225px;
+    }
+    .format-box h4 {margin:.05rem 0 .55rem;color:#1F3B51;font-size:.92rem}
+    .format-box ul {margin:.3rem 0 0 1.15rem;padding:0;color:#718493;font-size:.76rem;line-height:1.65}
+    .quality-strip {
+        display:grid;
+        grid-template-columns:repeat(5,minmax(0,1fr));
+        gap:.55rem;
+        margin:.55rem 0 .8rem;
+    }
+    .quality-item {
+        border:1px solid #E5EDF1;
+        border-radius:12px;
+        padding:.65rem .72rem;
+        background:#fff;
+    }
+    .quality-item b {display:block;color:#17334A;font-size:.96rem}
+    .quality-item span {display:block;color:#8393A0;font-size:.68rem;margin-top:.15rem}
+    .integrity-note {
+        background:#FFF9EC;
+        border:1px solid #F1E2B8;
+        color:#7A6429;
+        border-radius:12px;
+        padding:.75rem .85rem;
+        font-size:.76rem;
+        line-height:1.6;
+        margin:.6rem 0;
+    }
+
+
+    .research-shell {
+        border:1px solid #E2ECE9;
+        border-radius:22px;
+        background:
+            radial-gradient(circle at 92% 2%,rgba(31,175,154,.08),transparent 16rem),
+            #FFFFFF;
+        box-shadow:0 12px 34px rgba(28,61,78,.05);
+        padding:1rem 1.05rem;
+        margin:.8rem 0;
+    }
+    .research-stepbar {
+        display:grid;
+        grid-template-columns:repeat(4,minmax(0,1fr));
+        gap:.55rem;
+        margin:.75rem 0 1rem;
+    }
+    .research-step-pill {
+        border:1px solid #E3ECEF;
+        border-radius:12px;
+        padding:.6rem .7rem;
+        background:#FBFDFE;
+    }
+    .research-step-pill b {
+        color:#1AA48F;
+        font-size:.7rem;
+        display:block;
+        margin-bottom:.12rem;
+    }
+    .research-step-pill span {
+        color:#38546A;
+        font-size:.73rem;
+        font-weight:800;
+    }
+    .source-card-title {
+        display:flex;
+        align-items:center;
+        gap:.5rem;
+        color:#17364D;
+        font-weight:900;
+        font-size:.94rem;
+        margin-bottom:.25rem;
+    }
+    .source-card-desc {
+        color:#7A8C99;
+        font-size:.72rem;
+        line-height:1.55;
+        margin-bottom:.6rem;
+    }
+    .source-icon {
+        width:30px;height:30px;border-radius:9px;
+        display:inline-flex;align-items:center;justify-content:center;
+        background:#EAF8F4;color:#188E7B;font-weight:900;
+    }
+    .platform-schema {
+        display:flex;
+        flex-wrap:wrap;
+        gap:.32rem;
+        margin-top:.5rem;
+    }
+    .schema-chip {
+        border:1px solid #E1EBEE;
+        background:#F6FAFB;
+        color:#637987;
+        border-radius:999px;
+        padding:.26rem .46rem;
+        font-size:.65rem;
+    }
+    .source-active {
+        display:inline-flex;
+        align-items:center;
+        gap:.28rem;
+        background:#EAF8F4;
+        border:1px solid #D3ECE5;
+        color:#178D79;
+        border-radius:999px;
+        padding:.34rem .55rem;
+        font-size:.7rem;
+        font-weight:850;
+        margin:.25rem 0 .65rem;
+    }
+    .compact-guide {
+        border:1px solid #E4ECEF;
+        border-radius:14px;
+        background:#FBFDFE;
+        padding:.75rem .82rem;
+        min-height:100%;
+    }
+    .compact-guide h4 {
+        color:#28465B;
+        font-size:.79rem;
+        margin:0 0 .35rem;
+    }
+    .compact-guide p {
+        color:#7B8D99;
+        font-size:.68rem;
+        line-height:1.55;
+        margin:.15rem 0;
+    }
+    .preview-head {
+        display:flex;align-items:center;justify-content:space-between;
+        gap:.8rem;margin:.85rem 0 .4rem;
+    }
+    .preview-head strong {font-size:.9rem;color:#19374E}
+    .analysis-command {
+        border:1px solid #CDE9E2;
+        border-radius:19px;
+        padding:1rem 1.05rem;
+        background:
+            radial-gradient(circle at 95% 5%,rgba(31,175,154,.09),transparent 11rem),
+            linear-gradient(135deg,#F7FCFA,#FFFFFF);
+        margin:1rem 0;
+    }
+    .analysis-command .kicker {
+        color:#1BA48F;font-size:.68rem;font-weight:900;letter-spacing:.1em;
+    }
+    .analysis-command h3 {
+        margin:.22rem 0 .2rem;color:#17374E;font-size:1.02rem;
+    }
+    .analysis-command p {
+        color:#778A98;font-size:.74rem;line-height:1.6;margin:0 0 .6rem;
+    }
+    .method-card {
+        border:1px solid #DFE9ED;
+        background:#FFFFFF;
+        border-radius:16px;
+        padding:.85rem .9rem;
+        min-height:114px;
+    }
+    .method-card-label {
+        color:#8796A2;font-size:.68rem;font-weight:700;
+    }
+    .method-card-value {
+        color:#17354B;font-size:1rem;font-weight:900;margin-top:.25rem;
+    }
+    .method-card-note {
+        color:#1B9B86;font-size:.68rem;margin-top:.35rem;
+    }
+    .variable-panel {
+        border:1px solid #E0E9ED;
+        border-radius:17px;
+        padding:.85rem .9rem;
+        background:#FFFFFF;
+        margin:.65rem 0;
+    }
+    .run-panel {
+        padding:.2rem 0 .55rem;
+    }
+    .report-hero {
+        border:1px solid #CFE9E2;
+        border-radius:21px;
+        padding:1.05rem 1.1rem;
+        background:
+            radial-gradient(circle at 92% 10%,rgba(31,175,154,.10),transparent 14rem),
+            linear-gradient(135deg,#F3FBF8,#FFFFFF);
+        margin:1.3rem 0 .75rem;
+        box-shadow:0 10px 28px rgba(31,109,90,.05);
+    }
+    .report-hero small {
+        color:#1BA48F;font-weight:900;letter-spacing:.1em;
+    }
+    .report-hero h2 {
+        color:#17364D;font-size:1.35rem;margin:.28rem 0 .28rem;
+    }
+    .report-hero p {
+        color:#778A98;font-size:.76rem;margin:0;
+    }
+    /* Modal data-import experience */
+    div[data-testid="stDialog"] div[role="dialog"] {
+        width:min(1180px,94vw) !important;
+        max-width:1180px !important;
+        border-radius:22px !important;
+        border:1px solid #DFE8EC !important;
+        box-shadow:0 28px 80px rgba(25,48,67,.20) !important;
+    }
+    div[data-testid="stDialog"] div[role="dialog"] > div {
+        border-radius:22px !important;
+    }
+    .import-dialog-kicker {
+        color:#1AA58F;
+        font-size:.68rem;
+        font-weight:900;
+        letter-spacing:.1em;
+        margin-bottom:.18rem;
+    }
+    .import-dialog-sub {
+        color:#7C8D99;
+        font-size:.73rem;
+        line-height:1.55;
+        margin-bottom:.65rem;
+    }
+    .template-preview-head {
+        color:#19384F;
+        font-size:.95rem;
+        font-weight:900;
+        margin-bottom:.28rem;
+    }
+
+    .format-main-card {
+        border:1px solid #DDE8EC;
+        border-radius:17px;
+        background:
+            radial-gradient(circle at 95% 4%,rgba(31,175,154,.06),transparent 10rem),
+            #FBFDFE;
+        padding:1rem 1.05rem;
+        min-height:430px;
+    }
+    .format-main-title {
+        color:#17364D;
+        font-size:1.02rem;
+        font-weight:900;
+        margin-bottom:.28rem;
+    }
+    .format-main-sub {
+        color:#7B8D99;
+        font-size:.72rem;
+        line-height:1.55;
+        margin-bottom:.85rem;
+    }
+    .format-rule-row {
+        display:grid;
+        grid-template-columns:34px 1fr;
+        gap:.55rem;
+        align-items:flex-start;
+        border-bottom:1px solid #E8EFF2;
+        padding:.68rem 0;
+        color:#536B7C;
+        font-size:.76rem;
+        line-height:1.55;
+    }
+    .format-rule-row:last-of-type {
+        border-bottom:none;
+    }
+    .format-rule-no {
+        width:28px;
+        height:28px;
+        border-radius:8px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        background:#EAF8F4;
+        color:#188F7B;
+        font-size:.64rem;
+        font-weight:900;
+    }
+    .format-supported {
+        margin-top:.8rem;
+        padding:.58rem .65rem;
+        border-radius:10px;
+        background:#F2F7F8;
+        color:#7A8C98;
+        font-size:.68rem;
+        line-height:1.5;
+    }
+    .mini-template-wrap {
+        margin-top:.75rem;
+        border:1px solid #E3EBEE;
+        border-radius:13px;
+        background:#FFFFFF;
+        padding:.72rem .75rem;
+    }
+    .mini-template-head {
+        display:flex;
+        justify-content:space-between;
+        align-items:flex-start;
+        margin-bottom:.5rem;
+    }
+    .mini-template-head strong {
+        display:block;
+        color:#29465A;
+        font-size:.78rem;
+        margin-bottom:.12rem;
+    }
+    .mini-template-head span {
+        display:block;
+        color:#8A98A3;
+        font-size:.62rem;
+        line-height:1.4;
+    }
+    .mini-template-table {
+        width:100%;
+        border-collapse:collapse;
+        font-size:.65rem;
+        color:#52697A;
+    }
+    .mini-template-table th {
+        text-align:left;
+        background:#F5F8FA;
+        color:#405C6E;
+        font-weight:800;
+        padding:.38rem .42rem;
+        border:1px solid #E6EDF0;
+    }
+    .mini-template-table td {
+        padding:.34rem .42rem;
+        border:1px solid #E8EEF1;
+        background:#FFFFFF;
+    }
+    .template-preview-note {
+        color:#7E8F9C;
+        font-size:.69rem;
+        line-height:1.5;
+        margin-bottom:.55rem;
+    }
+    .import-status-card {
+        border:1px solid #DCE9E5;
+        border-radius:15px;
+        padding:.8rem .85rem;
+        background:linear-gradient(135deg,#F6FCFA,#FFFFFF);
+        min-height:116px;
+    }
+    .import-status-card strong {
+        display:block;
+        color:#17364D;
+        font-size:.86rem;
+        margin-bottom:.24rem;
+    }
+    .import-status-card span {
+        color:#7B8D99;
+        font-size:.7rem;
+        line-height:1.5;
+    }
+    .import-status-pill {
+        display:inline-flex;
+        align-items:center;
+        padding:.3rem .52rem;
+        border-radius:999px;
+        background:#EAF8F4;
+        border:1px solid #D3ECE5;
+        color:#178D79;
+        font-size:.68rem;
+        font-weight:850;
+        margin-top:.48rem;
+    }
+
+
+    /* Stronger form-field contrast inside the import modal */
+    div[data-testid="stDialog"] [data-testid="stTextInput"] input,
+    div[data-testid="stDialog"] [data-testid="stTextArea"] textarea {
+        background:#F3F7F9 !important;
+        border:1px solid #CEDAE1 !important;
+        color:#20384A !important;
+        box-shadow:inset 0 1px 2px rgba(31,55,72,.035) !important;
+        transition:border-color .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    div[data-testid="stDialog"] [data-testid="stTextInput"] input {
+        min-height:44px !important;
+    }
+
+    div[data-testid="stDialog"] [data-testid="stTextInput"] input::placeholder,
+    div[data-testid="stDialog"] [data-testid="stTextArea"] textarea::placeholder {
+        color:#6F808D !important;
+        opacity:1 !important;
+    }
+
+    div[data-testid="stDialog"] [data-testid="stTextInput"] input:focus,
+    div[data-testid="stDialog"] [data-testid="stTextArea"] textarea:focus {
+        background:#FFFFFF !important;
+        border-color:#21AD98 !important;
+        box-shadow:0 0 0 3px rgba(33,173,152,.10) !important;
+        outline:none !important;
+    }
+
+    div[data-testid="stDialog"] [data-testid="stTextInput"] label,
+    div[data-testid="stDialog"] [data-testid="stTextArea"] label {
+        color:#253D50 !important;
+        font-weight:700 !important;
+    }
+    @media(max-width:800px){
+        .research-stepbar{grid-template-columns:repeat(2,1fr)}
+    }
+
+    .instruction-panel {
+        margin:.95rem 0 .9rem;
+        border:1px solid #CFE8E2;
+        border-radius:18px;
+        padding:1rem 1.05rem;
+        background:
+            radial-gradient(circle at 95% 8%,rgba(31,175,154,.08),transparent 12rem),
+            linear-gradient(135deg,#F7FCFA,#FFFFFF);
+        box-shadow:0 8px 22px rgba(34,91,76,.045);
+    }
+    .instruction-kicker {
+        color:#1FAF9A;
+        font-size:.7rem;
+        font-weight:900;
+        letter-spacing:.1em;
+        margin-bottom:.25rem;
+    }
+    .instruction-title {
+        color:#15344B;
+        font-size:1.02rem;
+        font-weight:900;
+        margin-bottom:.22rem;
+    }
+    .instruction-desc {
+        color:#728594;
+        font-size:.78rem;
+        line-height:1.6;
+    }
+    .instruction-examples {
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:.42rem;
+        margin:.65rem 0 .25rem;
+    }
+    .instruction-example {
+        border:1px solid #E2ECE9;
+        background:#FFFFFF;
+        border-radius:10px;
+        padding:.5rem .58rem;
+        color:#587080;
+        font-size:.7rem;
+        line-height:1.45;
+    }
+    @media(max-width:760px){
+        .instruction-examples{grid-template-columns:1fr}
+    }
+    @media(max-width:760px){.quality-strip{grid-template-columns:repeat(2,1fr)}}
+
     .result-focus {
         margin:1.5rem 0 .85rem;
         padding:1.15rem 1.2rem;
@@ -948,9 +1626,9 @@ st.markdown(
 
 @st.cache_resource
 def services():
-    return ResearchAgent(), QueryEngine(), StatsEngine(), TemplateStore()
+    return ResearchAgent(), QueryEngine(), StatsEngine(), TemplateStore(), CustomDataEngine()
 
-agent, qe, se, ts = services()
+agent, qe, se, ts, custom_engine = services()
 
 # The LLM receives only the research question text, never patient-level data.
 AI_ENABLED = bool(getattr(agent, "ai_enabled", False))
@@ -1012,6 +1690,351 @@ st.markdown(
     '<div style="height:.15rem;border-bottom:1px solid #E9EFF3;margin-bottom:.25rem"></div>',
     unsafe_allow_html=True,
 )
+
+
+def _render_common_result_area(df, result, lang, c, source="demo", report_html=None):
+    st.markdown(
+        f"""
+        <div class="result-focus">
+            <div class="rf-kicker">ANALYSIS RESULT</div>
+            <h2>{c["result_focus"]}</h2>
+            <p>{c["result_focus_desc"]}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        f"""
+        <div class="stage-head">
+            <div class="stage-no">03</div>
+            <div>
+                <strong>{c["stage3"]}</strong>
+                <small>{c["stage3_desc"]}</small>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    r1, r2 = st.columns([1.55, .65])
+    r1.metric(c["method"], result["method"])
+    r2.metric(
+        c["p"],
+        "N/A" if result.get("p") is None else f'{result["p"]:.4g}',
+    )
+
+    chart_bytes = base64.b64decode(result["image"])
+    state_key = f"chart_expanded_{source}"
+    chart_expanded = st.session_state.get(state_key, False)
+
+    a1, a2 = st.columns([1.2, 1.25])
+    with a1:
+        if st.button(
+            ("↙ " if chart_expanded else "↗ ")
+            + (c["collapse_chart"] if chart_expanded else c["expand_chart"]),
+            use_container_width=True,
+            key=f"toggle_chart_{source}",
+        ):
+            st.session_state[state_key] = not chart_expanded
+            st.rerun()
+    with a2:
+        st.download_button(
+            "↓ " + c["export_chart"],
+            chart_bytes,
+            file_name=f"haiyan_{source}_analysis_chart.png",
+            mime="image/png",
+            use_container_width=True,
+            key=f"download_chart_{source}",
+        )
+
+    if chart_expanded:
+        st.image(chart_bytes, use_container_width=True)
+        st.markdown(f"**{c['summary']}**")
+        st.dataframe(
+            pd.DataFrame(result["summary"]),
+            use_container_width=True,
+            hide_index=True,
+        )
+    else:
+        chart_col, summary_col = st.columns([1.28, .72], gap="large")
+        with chart_col:
+            st.image(chart_bytes, use_container_width=True)
+        with summary_col:
+            st.markdown(f"**{c['summary']}**")
+            st.dataframe(
+                pd.DataFrame(result["summary"]),
+                use_container_width=True,
+                hide_index=True,
+                height=300,
+            )
+
+    st.markdown(f"**{c['conclusion']}**")
+    st.markdown(
+        f'<div class="insight-box">✦ {html.escape(result["conclusion"])}</div>',
+        unsafe_allow_html=True,
+    )
+
+    if result.get("cox"):
+        with st.expander(c["cox"], expanded=False):
+            st.dataframe(
+                pd.DataFrame(result["cox"]),
+                use_container_width=True,
+                hide_index=True,
+            )
+
+    export1, export2 = st.columns(2)
+    with export1:
+        st.download_button(
+            c["download"],
+            df.to_csv(index=False).encode("utf-8-sig"),
+            f"haiyan_{source}_analysis_data.csv",
+            "text/csv",
+            use_container_width=True,
+            key=f"download_data_{source}",
+        )
+    with export2:
+        st.download_button(
+            c["export_summary"],
+            pd.DataFrame(result["summary"]).to_csv(index=False).encode("utf-8-sig"),
+            f"haiyan_{source}_analysis_summary.csv",
+            "text/csv",
+            use_container_width=True,
+            key=f"download_summary_{source}",
+        )
+
+
+
+def _show_data_import_dialog(lang, c):
+    """
+    Modal import flow. Data are parsed only when the user confirms.
+    The parsed DataFrame is stored in Streamlit session state and then
+    re-enters the same research-analysis workflow as platform datasets.
+    """
+
+    @st.dialog(c["import_dialog_title"], width="large")
+    def _dialog():
+        left, right = st.columns([1.04, .96], gap="large")
+
+        with left:
+            st.markdown(
+                f"""
+                <div class="import-dialog-kicker">RESEARCH DATA IMPORT</div>
+                <div class="import-dialog-sub">
+                    {
+                        "填写基本项目信息后上传数据。项目说明仅用于本次分析界面展示，不会改变统计结果。"
+                        if lang == "zh"
+                        else
+                        "Add basic project information and import the dataset. Project notes are for workflow context only and do not alter statistical results."
+                    }
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            project_name = st.text_input(
+                c["import_project_name"] + " *",
+                value=st.session_state.get("import_project_name", ""),
+                placeholder=c["import_project_name_ph"],
+                key="dialog_project_name",
+            )
+            project_background = st.text_area(
+                c["import_project_background"],
+                value=st.session_state.get("import_project_background", ""),
+                placeholder=c["import_background_ph"],
+                height=92,
+                key="dialog_project_background",
+            )
+            project_summary = st.text_area(
+                c["import_project_summary"],
+                value=st.session_state.get("import_project_summary", ""),
+                placeholder=c["import_summary_ph"],
+                height=92,
+                key="dialog_project_summary",
+            )
+
+            upload_tab, paste_tab = st.tabs([c["upload_data"], c["paste_data"]])
+            dialog_uploaded = None
+            dialog_pasted = ""
+
+            with upload_tab:
+                dialog_uploaded = st.file_uploader(
+                    c["upload_data"],
+                    type=["csv", "xls", "xlsx"],
+                    key="dialog_upload_file",
+                    help=c["supported_files"],
+                )
+                st.caption(c["supported_files"])
+
+            with paste_tab:
+                dialog_pasted = st.text_area(
+                    c["paste_data"],
+                    placeholder=c["paste_placeholder"],
+                    height=145,
+                    key="dialog_paste_data",
+                )
+
+        with right:
+            st.html(
+                f"""
+                <div class="format-main-card">
+                    <div class="format-main-title">✓ {c["format_rules"]}</div>
+                    <div class="format-main-sub">
+                        {
+                            "请优先按以下规范整理数据。格式正确时，系统才能更稳定地识别变量类型、统计方法和分析结果。"
+                            if lang == "zh"
+                            else
+                            "Please structure the dataset according to these rules so the platform can reliably identify variable types, statistical methods and analysis outputs."
+                        }
+                    </div>
+
+                    <div class="format-rule-row">
+                        <span class="format-rule-no">01</span>
+                        <div>{c["format_rule_1"]}</div>
+                    </div>
+                    <div class="format-rule-row">
+                        <span class="format-rule-no">02</span>
+                        <div>{c["format_rule_2"]}</div>
+                    </div>
+                    <div class="format-rule-row">
+                        <span class="format-rule-no">03</span>
+                        <div>{c["format_rule_3"]}</div>
+                    </div>
+                    <div class="format-rule-row">
+                        <span class="format-rule-no">04</span>
+                        <div>{c["format_rule_4"]}</div>
+                    </div>
+                    <div class="format-rule-row">
+                        <span class="format-rule-no">05</span>
+                        <div>{c["format_rule_5"]}</div>
+                    </div>
+                    <div class="format-rule-row">
+                        <span class="format-rule-no">06</span>
+                        <div>{c["format_rule_6"]}</div>
+                    </div>
+
+                    <div class="format-supported">
+                        {c["supported_files"]}
+                    </div>
+                </div>
+                """
+            )
+
+            st.html(
+                f"""
+                <div class="mini-template-wrap">
+                    <div class="mini-template-head">
+                        <div>
+                            <strong>▦ {c["template_preview"]}</strong>
+                            <span>{c["template_instruction"]}</span>
+                        </div>
+                    </div>
+
+                    <table class="mini-template-table">
+                        <thead>
+                            <tr>
+                                <th>{"患者编号" if lang == "zh" else "patient_id"}</th>
+                                <th>{"分组" if lang == "zh" else "group"}</th>
+                                <th>{"结局指标" if lang == "zh" else "outcome"}</th>
+                                <th>{"年龄" if lang == "zh" else "age"}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>P001</td>
+                                <td>A</td>
+                                <td>7.2</td>
+                                <td>61</td>
+                            </tr>
+                            <tr>
+                                <td>P002</td>
+                                <td>B</td>
+                                <td>6.5</td>
+                                <td>58</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                """
+            )
+
+            if lang == "zh":
+                generic_template = (
+                    "患者编号,分组,结局指标,年龄,性别\n"
+                    "P001,A,7.2,61,女\n"
+                    "P002,B,6.5,58,男\n"
+                ).encode("utf-8-sig")
+                generic_template_name = "海研分析_通用数据模板.csv"
+            else:
+                generic_template = (
+                    "patient_id,group,outcome,age,sex\n"
+                    "P001,A,7.2,61,F\n"
+                    "P002,B,6.5,58,M\n"
+                ).encode("utf-8-sig")
+                generic_template_name = "haiyan_data_template.csv"
+
+            st.download_button(
+                "↓ " + c["download_template"],
+                generic_template,
+                generic_template_name,
+                "text/csv",
+                use_container_width=True,
+                key="dialog_download_generic_template",
+            )
+
+        st.markdown("<div style='height:.25rem'></div>", unsafe_allow_html=True)
+        cancel_col, confirm_col = st.columns([1, 1])
+
+        with cancel_col:
+            if st.button(
+                c["cancel_import"],
+                use_container_width=True,
+                key="dialog_cancel_import",
+            ):
+                st.rerun()
+
+        with confirm_col:
+            if st.button(
+                c["confirm_import"],
+                type="primary",
+                use_container_width=True,
+                key="dialog_confirm_import",
+            ):
+                if not project_name.strip():
+                    st.error(c["project_name_required"])
+                elif dialog_uploaded is None and not dialog_pasted.strip():
+                    st.error(c["file_required"])
+                else:
+                    try:
+                        if dialog_uploaded is not None:
+                            imported_df = custom_engine.load_uploaded(dialog_uploaded)
+                            imported_name = dialog_uploaded.name
+                            imported_kind = c["source_upload"]
+                        else:
+                            imported_df = custom_engine.load_pasted(dialog_pasted)
+                            imported_name = (
+                                "pasted_data"
+                                if lang == "en"
+                                else "粘贴数据"
+                            )
+                            imported_kind = c["source_paste"]
+
+                        st.session_state["workspace_imported_df"] = imported_df
+                        st.session_state["workspace_imported_name"] = imported_name
+                        st.session_state["workspace_imported_kind"] = imported_kind
+                        st.session_state["import_project_name"] = project_name.strip()
+                        st.session_state["import_project_background"] = project_background.strip()
+                        st.session_state["import_project_summary"] = project_summary.strip()
+                        st.session_state["workspace_active_source"] = "imported"
+                        st.session_state["workspace_platform_active"] = "none"
+                        st.session_state.pop("workspace_result", None)
+                        st.rerun()
+                    except Exception as exc:
+                        st.error(f'{c["failed"]}: {exc}')
+
+    _dialog()
+
+
 
 # -------------------------------------------------------------------
 # HOME
@@ -1166,399 +2189,697 @@ if st.session_state.page == "home":
 # ANALYSIS
 # -------------------------------------------------------------------
 elif st.session_state.page == "analysis":
+    # ================================================================
+    # Research workspace header
+    # ================================================================
     st.markdown(
         f"""
         <div class="workspace-head">
-            <div class="wk">{c["workspace_badge"]}</div>
+            <div class="wk">RESEARCH WORKSPACE</div>
             <h1>{c["workspace_title"]}</h1>
-            <p>{c["workspace_desc"]}</p>
+            <p>
+                {
+                    "选择平台科研数据库或导入自己的数据，用自然语言描述研究问题，平台将自动推荐统计路径并生成结果报告。"
+                    if lang == "zh"
+                    else
+                    "Choose a platform research dataset or import your own data, describe the research question naturally, and receive a recommended statistical path and report."
+                }
+            </p>
+        </div>
+        <div class="research-stepbar">
+            <div class="research-step-pill"><b>01</b><span>{c["unified_source_title"]}</span></div>
+            <div class="research-step-pill"><b>02</b><span>{c["instruction_title"]}</span></div>
+            <div class="research-step-pill"><b>03</b><span>{c["step_method"]} · {c["step_variables"]}</span></div>
+            <div class="research-step-pill"><b>04</b><span>{c["report_center"]}</span></div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    existing = ts.list()
-    template_names = [c["none"]] + [item["template_name"] for item in existing]
+    # ================================================================
+    # STEP 01 — Unified data source
+    # ================================================================
+    if "workspace_active_source" not in st.session_state:
+        st.session_state["workspace_active_source"] = None
+    if "workspace_platform_active" not in st.session_state:
+        st.session_state["workspace_platform_active"] = "none"
 
-    col_a, col_b = st.columns([1.15, .85])
-    with col_a:
-        example_name = st.selectbox(
-            c["example"],
-            list(EXAMPLES[lang].keys()),
-            key=f"example_{lang}",
-        )
-    with col_b:
-        selected_template = st.selectbox(
-            c["load_template"],
-            template_names,
-            key=f"tpl_{lang}",
-        )
+    st.markdown('<div class="research-shell">', unsafe_allow_html=True)
+    import_col, platform_col = st.columns([1, 1], gap="large")
 
-    selected_payload = None
-    if selected_template != c["none"]:
-        selected_payload = next(
-            (x for x in existing if x["template_name"] == selected_template),
-            None,
-        )
+    # ---------------- Import own data: modal entry only ----------------
+    with import_col:
+        imported_df_state = st.session_state.get("workspace_imported_df")
+        imported_name = st.session_state.get("workspace_imported_name")
+        project_name = st.session_state.get("import_project_name")
 
-    default_query = EXAMPLES[lang][example_name]
-    if selected_payload:
-        default_query = selected_payload["plan"].get("original_query", default_query)
-
-    query = st.text_area(
-        c["question"],
-        value=default_query,
-        height=112,
-        help=c["question_hint"],
-        key=f"research_question_{lang}_{example_name}_{selected_template}",
-    )
-
-    run = st.button(
-        "✦  " + c["run"],
-        type="primary",
-        use_container_width=True,
-        key="run_analysis",
-    )
-
-    # Compute once, then store everything in session state.
-    # This allows zoom/collapse buttons to rerun Streamlit without losing results.
-    if run:
-        try:
-            plan = agent.plan(query, lang)
-
-            # Show the semantic interpretation mode before any database execution.
-            if plan.parser_mode == "llm_structured_output":
-                st.success(
-                    f'✦ {c["ai_mode"]}: {c["ai_llm"]}'
-                    + (f' · {c["ai_model"]}: {plan.parser_model}' if plan.parser_model else "")
-                )
-            elif plan.parser_mode == "rule_fallback_api_error":
-                st.warning(f'↻ {c["ai_mode"]}: {c["ai_fallback"]}')
-            else:
-                st.info(f'◌ {c["ai_mode"]}: {c["ai_rule"]}')
-
-            # If the LLM correctly decides that a genuinely important detail is
-            # missing, ask one concise clarification instead of inventing it.
-            if plan.clarification_needed:
-                st.warning(
-                    f'**{c["clarification"]}**\n\n'
-                    + (plan.clarification_question or "")
-                )
-                with st.expander(c["structured"]):
-                    st.json(plan.to_dict())
-                st.stop()
-
-            # Semantic understanding may be broader than the current synthetic
-            # database. Show that explicitly rather than pretending the data exist.
-            if not plan.executable:
-                st.warning(
-                    f'**{c["understood_but_not_executable"]}**\n\n'
-                    + (plan.execution_warning or "")
-                )
-                for item in plan.explanation:
-                    st.write("•", item)
-                if plan.assumptions:
-                    st.markdown(f'**{c["assumptions_title"]}**')
-                    for item in plan.assumptions:
-                        st.write("•", item)
-                with st.expander(c["structured"]):
-                    st.json(plan.to_dict())
-                st.stop()
-
-            df, sql = qe.run(plan.to_dict())
-            if df.empty:
-                st.warning(c["empty"])
-                st.stop()
-
-            result = se.analyze(df, plan.to_dict(), lang)
-            if "error" in result:
-                st.error(result["error"])
-                st.stop()
-
-            st.session_state["analysis_payload"] = {
-                "plan": plan.to_dict(),
-                "df": df,
-                "sql": sql,
-                "result": result,
-                "lang": lang,
-                "query": query,
-            }
-            st.session_state["logic_expanded"] = False
-            st.session_state["data_expanded"] = False
-            st.session_state["chart_expanded"] = False
-        except Exception as exc:
-            st.error(f'{c["failed"]}: {exc}')
-
-    payload = st.session_state.get("analysis_payload")
-
-    if payload:
-        plan_data = payload["plan"]
-        df = payload["df"]
-        sql = payload["sql"]
-        result = payload["result"]
-
-        # --------------------------------------------------------------
-        # Stage 1 — compact by default
-        # --------------------------------------------------------------
         st.markdown(
             f"""
-            <div class="stage-head">
-                <div class="stage-no">01</div>
-                <div>
-                    <strong>{c["stage1"]}</strong>
-                    <small>{c["stage1_desc"]} · {c["compact_hint"]}</small>
-                </div>
+            <div class="source-card-title">
+                <span class="source-icon">⇧</span>
+                {c["my_data"]}
             </div>
+            <div class="source-card-desc">{c["import_card_desc"]}</div>
             """,
             unsafe_allow_html=True,
         )
 
-        parser_mode = plan_data.get("parser_mode", "rule")
-        parser_model = plan_data.get("parser_model")
-        if parser_mode == "llm_structured_output":
-            st.caption(
-                f'✦ {c["ai_mode"]}: {c["ai_llm"]}'
-                + (f' · {parser_model}' if parser_model else "")
-            )
-        elif parser_mode == "rule_fallback_api_error":
-            st.caption(f'↻ {c["ai_mode"]}: {c["ai_fallback"]}')
-        else:
-            st.caption(f'◌ {c["ai_mode"]}: {c["ai_rule"]}')
-
-        compact_items = plan_data.get("explanation", [])[:3]
-        chips = "".join(
-            f'<span class="mini-chip">✓ {html.escape(str(item))}</span>'
-            for item in compact_items
-        )
-        st.markdown(
-            f"""
-            <div class="compact-panel">
-                <div class="compact-note">{c["compact_hint"]}</div>
-                <div class="mini-list">{chips}</div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        logic_label = (
-            c["collapse_details"]
-            if st.session_state.get("logic_expanded", False)
-            else c["expand_details"]
-        )
-        if st.button(
-            ("↙ " if st.session_state.get("logic_expanded", False) else "↗ ") + logic_label,
-            key="toggle_logic",
-        ):
-            st.session_state["logic_expanded"] = not st.session_state.get("logic_expanded", False)
-            st.rerun()
-
-        if st.session_state.get("logic_expanded", False):
-            for item in plan_data.get("explanation", []):
-                st.markdown(f"**✓** {html.escape(str(item))}")
-            if plan_data.get("assumptions"):
-                st.markdown(f'**{c["assumptions_title"]}**')
-                for item in plan_data.get("assumptions", []):
-                    st.write("•", item)
-            with st.expander(c["structured"], expanded=True):
-                st.json(plan_data)
-
-        # --------------------------------------------------------------
-        # Stage 2 — cohort data is deliberately smaller than final result
-        # --------------------------------------------------------------
-        st.markdown(
-            f"""
-            <div class="stage-head">
-                <div class="stage-no">02</div>
-                <div>
-                    <strong>{c["stage2"]}</strong>
-                    <small>{c["stage2_desc"]} · {c["compact_hint"]}</small>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        m1, m2, m3 = st.columns(3)
-        m1.metric(c["included"], len(df))
-        m2.metric(c["groups"], df["regimen"].nunique() if not df.empty else 0)
-        m3.metric(c["endpoint"], plan_data.get("endpoint") or "-")
-
-        data_expanded = st.session_state.get("data_expanded", False)
-        dlabel = c["collapse_data"] if data_expanded else c["expand_data"]
-
-        data_title_col, data_btn_col = st.columns([4.5, 1.2])
-        with data_title_col:
+        if imported_df_state is not None:
             st.markdown(
-                f"**{c['data_preview']}** · {c['rows_preview'] if not data_expanded else ''}"
+                f"""
+                <div class="import-status-card">
+                    <strong>{html.escape(str(project_name or imported_name or c["imported_project"]))}</strong>
+                    <span>
+                        {html.escape(str(imported_name or ""))}
+                        · {len(imported_df_state):,} {c["rows"]}
+                        · {len(imported_df_state.columns)} {c["columns"]}
+                    </span>
+                    <div class="import-status-pill">● {c["import_active"]}</div>
+                </div>
+                """,
+                unsafe_allow_html=True,
             )
-        with data_btn_col:
+            r1, r2 = st.columns([1.35, .75])
+            with r1:
+                if st.button(
+                    "⇧ " + c["reimport_data"],
+                    use_container_width=True,
+                    key="open_reimport_dialog",
+                ):
+                    _show_data_import_dialog(lang, c)
+            with r2:
+                if st.button(
+                    c["clear_import"],
+                    use_container_width=True,
+                    key="clear_imported_data",
+                ):
+                    for key in [
+                        "workspace_imported_df",
+                        "workspace_imported_name",
+                        "workspace_imported_kind",
+                        "import_project_name",
+                        "import_project_background",
+                        "import_project_summary",
+                    ]:
+                        st.session_state.pop(key, None)
+                    if st.session_state.get("workspace_active_source") == "imported":
+                        st.session_state["workspace_active_source"] = None
+                    st.session_state.pop("workspace_result", None)
+                    st.rerun()
+        else:
+            st.markdown(
+                f"""
+                <div class="import-status-card">
+                    <strong>{c["no_import_yet"]}</strong>
+                    <span>
+                        {
+                            "点击下方按钮后，将以独立浮层窗口完成项目说明、文件上传、模板查看与格式校验。"
+                            if lang == "zh"
+                            else
+                            "Open the modal below to add project notes, upload/paste data, review templates and validate the format."
+                        }
+                    </span>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
             if st.button(
-                ("↙ " if data_expanded else "↗ ") + dlabel,
+                "＋ " + c["open_import_dialog"],
+                type="primary",
                 use_container_width=True,
-                key="toggle_data",
+                key="open_import_dialog",
             ):
-                st.session_state["data_expanded"] = not data_expanded
+                _show_data_import_dialog(lang, c)
+
+    # ---------------- Platform research database ----------------
+    with platform_col:
+        st.markdown(
+            f"""
+            <div class="source-card-title">
+                <span class="source-icon">▦</span>
+                {c["platform_dataset"]}
+            </div>
+            <div class="source-card-desc">{c["platform_card_desc"]}</div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        platform_options = custom_engine.platform_dataset_options(lang)
+        option_codes = [x[0] for x in platform_options]
+        label_map = dict(platform_options)
+
+        current_platform = st.session_state.get("workspace_platform_active", "none")
+        default_platform_idx = (
+            option_codes.index(current_platform)
+            if current_platform in option_codes
+            else 0
+        )
+
+        platform_code = st.selectbox(
+            c["choose_platform_dataset"],
+            option_codes,
+            index=default_platform_idx,
+            format_func=lambda x: label_map[x],
+            key="workspace_platform_dataset_selector",
+            label_visibility="collapsed",
+        )
+
+        platform_desc = custom_engine.platform_dataset_description(platform_code, lang)
+        st.caption(platform_desc)
+
+        fields = custom_engine.platform_dataset_fields(platform_code)
+        if fields:
+            chips = "".join(
+                f'<span class="schema-chip">{html.escape(str(field))}</span>'
+                for field in fields
+            )
+            st.markdown(
+                f"""
+                <div style="font-size:.68rem;color:#8998A4;margin-top:.35rem">
+                    {c["available_fields"]}
+                </div>
+                <div class="platform-schema">{chips}</div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+        if platform_code != "none":
+            use_platform = st.button(
+                "▦ " + c["use_platform_dataset"],
+                type=(
+                    "primary"
+                    if st.session_state.get("workspace_active_source") != "platform"
+                    or current_platform != platform_code
+                    else "secondary"
+                ),
+                use_container_width=True,
+                key="activate_platform_dataset",
+            )
+            if use_platform:
+                st.session_state["workspace_platform_active"] = platform_code
+                st.session_state["workspace_active_source"] = "platform"
+                st.session_state.pop("workspace_result", None)
                 st.rerun()
 
-        # 6 rows in compact mode; 50 rows in expanded mode.
-        if data_expanded:
-            st.dataframe(
-                df.head(50),
-                use_container_width=True,
-                hide_index=True,
-                height=520,
-            )
-            with st.expander(c["sql"]):
-                st.code(sql, language="sql")
-        else:
-            st.dataframe(
-                df.head(6),
-                use_container_width=True,
-                hide_index=True,
-                height=245,
+        if (
+            st.session_state.get("workspace_active_source") == "platform"
+            and st.session_state.get("workspace_platform_active") != "none"
+        ):
+            active_code = st.session_state["workspace_platform_active"]
+            st.markdown(
+                f'<div class="import-status-pill">● {c["platform_active"]}: '
+                f'{html.escape(label_map.get(active_code, active_code))}</div>',
+                unsafe_allow_html=True,
             )
 
-        # --------------------------------------------------------------
-        # Stage 3 — visual priority: final analysis result
-        # --------------------------------------------------------------
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # ================================================================
+    # Resolve current active dataset.
+    # ================================================================
+    research_df = None
+    source_label = None
+
+    try:
+        active_source = st.session_state.get("workspace_active_source")
+
+        if active_source == "imported":
+            research_df = st.session_state.get("workspace_imported_df")
+            source_label = (
+                f'{c["source_upload"]} · '
+                f'{st.session_state.get("workspace_imported_name", "")}'
+            )
+
+        elif active_source == "platform":
+            active_platform_code = st.session_state.get(
+                "workspace_platform_active",
+                "none",
+            )
+            if active_platform_code != "none":
+                research_df = custom_engine.load_platform_dataset(
+                    active_platform_code
+                )
+                source_label = (
+                    f'{c["source_platform"]} · '
+                    f'{label_map.get(active_platform_code, active_platform_code)}'
+                )
+    except Exception as exc:
+        st.error(f'{c["failed"]}: {exc}')
+
+    # ================================================================
+    # STEP 02 — Analysis instruction.
+    # It remains visible even before a dataset is available so users
+    # may paste a table directly into the instruction.
+    # ================================================================
+    st.markdown(
+        f"""
+        <div class="analysis-command">
+            <div class="kicker">02 · ANALYSIS INSTRUCTION</div>
+            <h3>{c["instruction_title"]}</h3>
+            <p>{c["instruction_desc"]}</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    example_texts = [
+        c["instruction_example_1"],
+        c["instruction_example_2"],
+        c["instruction_example_3"],
+        c["instruction_example_4"],
+    ]
+    ex1, ex2, ex3, ex4 = st.columns(4)
+    for i, (col, example) in enumerate(zip([ex1, ex2, ex3, ex4], example_texts), start=1):
+        with col:
+            if st.button(
+                f"{i}. " + (example[:32] + "…" if len(example) > 32 else example),
+                use_container_width=True,
+                key=f"workspace_example_{i}_{lang}",
+                help=example,
+            ):
+                st.session_state["workspace_question"] = example
+                st.rerun()
+
+    if "workspace_question" not in st.session_state:
+        st.session_state["workspace_question"] = ""
+
+    research_question = st.text_area(
+        c["instruction_label"],
+        key="workspace_question",
+        height=132,
+        placeholder=c["custom_question_hint"],
+        label_visibility="collapsed",
+    )
+    st.caption(c["instruction_empty_hint"])
+
+    # If no other source exists, attempt table extraction from the question.
+    if research_df is None and research_question.strip():
+        try:
+            embedded = custom_engine.extract_from_question(research_question)
+            if embedded is not None:
+                research_df = embedded
+                source_label = c["source_embedded"]
+                st.success(c["embedded_data_detected"])
+        except Exception:
+            pass
+
+    st.markdown(
+        f'<div class="integrity-note">⚖ {c["result_integrity"]}</div>',
+        unsafe_allow_html=True,
+    )
+
+    if research_df is None:
+        st.info(c["need_custom_data"])
+    else:
+        # ============================================================
+        # Data profile + compact preview
+        # ============================================================
+        profile = custom_engine.profile(research_df)
         st.markdown(
-            f"""
-            <div class="result-focus">
-                <div class="rf-kicker">ANALYSIS RESULT</div>
-                <h2>{c["result_focus"]}</h2>
-                <p>{c["result_focus_desc"]}</p>
-            </div>
-            """,
+            f'<div class="source-active">● {c["current_source"]}: {html.escape(str(source_label))}</div>',
             unsafe_allow_html=True,
         )
 
         st.markdown(
             f"""
-            <div class="stage-head">
+            <div class="quality-strip">
+                <div class="quality-item"><b>{profile.rows:,}</b><span>{c["rows"]}</span></div>
+                <div class="quality-item"><b>{profile.columns}</b><span>{c["columns"]}</span></div>
+                <div class="quality-item"><b>{profile.missing_rate:.1%}</b><span>{c["missing_rate"]}</span></div>
+                <div class="quality-item"><b>{len(profile.numeric_columns)}</b><span>{c["numeric_count"]}</span></div>
+                <div class="quality-item"><b>{len(profile.categorical_columns)}</b><span>{c["categorical_count"]}</span></div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        if "workspace_data_expanded" not in st.session_state:
+            st.session_state["workspace_data_expanded"] = False
+
+        ph1, ph2 = st.columns([4.6, 1])
+        with ph1:
+            st.markdown(f"### {c['data_preview_title']}")
+        with ph2:
+            label = (
+                c["collapse_preview"]
+                if st.session_state["workspace_data_expanded"]
+                else c["expand_preview"]
+            )
+            if st.button(label, use_container_width=True, key="workspace_preview_toggle"):
+                st.session_state["workspace_data_expanded"] = not st.session_state["workspace_data_expanded"]
+                st.rerun()
+
+        st.dataframe(
+            research_df.head(50 if st.session_state["workspace_data_expanded"] else 7),
+            use_container_width=True,
+            hide_index=True,
+            height=500 if st.session_state["workspace_data_expanded"] else 255,
+        )
+
+        # ============================================================
+        # STEP 03 — Method recommendation + variable roles
+        # ============================================================
+        intent = custom_engine.infer_intent(research_question, research_df)
+        method_keys = list(METHODS.keys())
+        recommended = intent["method"] if intent["method"] in method_keys else "descriptive"
+
+        st.markdown(
+            f"""
+            <div class="stage-head" style="margin-top:1.1rem">
                 <div class="stage-no">03</div>
                 <div>
-                    <strong>{c["stage3"]}</strong>
-                    <small>{c["stage3_desc"]}</small>
+                    <strong>{c["step_method"]} · {c["step_variables"]}</strong>
+                    <small>
+                        {
+                            "系统根据你的分析指令和变量类型给出推荐，你仍可手动修改。"
+                            if lang == "zh"
+                            else
+                            "The platform recommends a method from your instruction and variable types; you can still override it."
+                        }
+                    </small>
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
 
-        r1, r2 = st.columns([1.55, .65])
-        r1.metric(c["method"], result["method"])
-        r2.metric(c["p"], f'{result["p"]:.4g}')
+        method_left, method_right = st.columns([.72, 1.28], gap="large")
 
-        chart_bytes = base64.b64decode(result["image"])
-        chart_expanded = st.session_state.get("chart_expanded", False)
-
-        chart_actions1, chart_actions2, chart_actions3 = st.columns([1.2, 1.25, 2.6])
-        with chart_actions1:
-            if st.button(
-                ("↙ " if chart_expanded else "↗ ")
-                + (c["collapse_chart"] if chart_expanded else c["expand_chart"]),
-                use_container_width=True,
-                key="toggle_chart",
-            ):
-                st.session_state["chart_expanded"] = not chart_expanded
-                st.rerun()
-        with chart_actions2:
-            st.download_button(
-                "↓ " + c["export_chart"],
-                chart_bytes,
-                file_name="haiyan_analysis_chart.png",
-                mime="image/png",
-                use_container_width=True,
-                key="download_chart_png",
+        with method_left:
+            st.markdown(
+                f"""
+                <div class="method-card">
+                    <div class="method-card-label">{c["recommended_method"]}</div>
+                    <div class="method-card-value">{html.escape(method_label(recommended, lang))}</div>
+                    <div class="method-card-note">
+                        {'来自指令 + 数据结构推断' if lang == 'zh' else 'Inferred from instruction + data structure'}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
             )
 
-        if chart_expanded:
-            st.image(chart_bytes, use_container_width=True)
-            st.markdown(f"**{c['summary']}**")
-            st.dataframe(
-                pd.DataFrame(result["summary"]),
-                use_container_width=True,
-                hide_index=True,
+        with method_right:
+            selected_method = st.selectbox(
+                c["analysis_method"],
+                method_keys,
+                index=method_keys.index(recommended),
+                format_func=lambda x: method_label(x, lang),
+                key="workspace_method",
             )
+
+        method = intent["method"] if selected_method == "auto" else selected_method
+        if method == "auto":
+            method = recommended
+
+        st.markdown('<div class="variable-panel">', unsafe_allow_html=True)
+
+        cols = list(research_df.columns)
+        numeric_cols = profile.numeric_columns
+        categorical_cols = profile.categorical_columns
+
+        def _pick_index(options, guess, fallback=0):
+            if not options:
+                return 0
+            if guess in options:
+                return options.index(guess)
+            return min(fallback, len(options)-1)
+
+        config = {"method": method}
+
+        if method in {"t_test", "mann_whitney", "anova", "kruskal"}:
+            a, b = st.columns(2)
+            group_opts = categorical_cols or cols
+            outcome_opts = numeric_cols or cols
+            with a:
+                group = st.selectbox(
+                    c["group_variable"],
+                    group_opts,
+                    index=_pick_index(group_opts, intent.get("group")),
+                    key="workspace_group",
+                )
+            with b:
+                outcome = st.selectbox(
+                    c["outcome_variable"],
+                    outcome_opts,
+                    index=_pick_index(outcome_opts, intent.get("outcome")),
+                    key="workspace_outcome",
+                )
+            config.update(group=group, outcome=outcome)
+
+        elif method in {"paired_t", "wilcoxon", "pearson", "spearman"}:
+            a, b = st.columns(2)
+            opts = numeric_cols or cols
+            with a:
+                x = st.selectbox(
+                    c["x_variable"],
+                    opts,
+                    index=_pick_index(opts, intent.get("x"), 0),
+                    key="workspace_x",
+                )
+            with b:
+                y = st.selectbox(
+                    c["y_variable"],
+                    opts,
+                    index=_pick_index(opts, intent.get("y"), 1),
+                    key="workspace_y",
+                )
+            config.update(x=x, y=y)
+
+        elif method in {"chi_square", "fisher"}:
+            a, b = st.columns(2)
+            opts = categorical_cols or cols
+            with a:
+                group = st.selectbox(
+                    c["group_variable"],
+                    opts,
+                    index=_pick_index(opts, intent.get("group"), 0),
+                    key="workspace_cat_group",
+                )
+            with b:
+                outcome = st.selectbox(
+                    c["outcome_variable"],
+                    opts,
+                    index=_pick_index(opts, intent.get("outcome"), 1),
+                    key="workspace_cat_outcome",
+                )
+            config.update(group=group, outcome=outcome)
+
+        elif method in {"linear_regression", "logistic_regression"}:
+            a, b = st.columns([.8, 1.2])
+            if method == "linear_regression":
+                outcome_opts = numeric_cols or cols
+            else:
+                outcome_opts = [
+                    col for col in cols
+                    if 1 < research_df[col].nunique(dropna=True) <= 2
+                ] or cols
+            with a:
+                outcome = st.selectbox(
+                    c["outcome_variable"],
+                    outcome_opts,
+                    index=_pick_index(outcome_opts, intent.get("outcome"), 0),
+                    key="workspace_reg_outcome",
+                )
+            with b:
+                pred_opts = [x for x in cols if x != outcome]
+                default_preds = [x for x in intent.get("predictors", []) if x in pred_opts]
+                predictors = st.multiselect(
+                    c["predictors"],
+                    pred_opts,
+                    default=default_preds[:6],
+                    key="workspace_predictors",
+                )
+            config.update(outcome=outcome, predictors=predictors)
+
+        elif method in {"survival", "cox"}:
+            a, b, d = st.columns(3)
+            numeric_opts = numeric_cols or cols
+            binary_opts = [
+                x for x in cols
+                if 1 < research_df[x].nunique(dropna=True) <= 2
+            ] or cols
+            with a:
+                time_col = st.selectbox(
+                    c["time_variable"],
+                    numeric_opts,
+                    index=_pick_index(numeric_opts, intent.get("time"), 0),
+                    key="workspace_time",
+                )
+            with b:
+                event_col = st.selectbox(
+                    c["event_variable"],
+                    binary_opts,
+                    index=_pick_index(binary_opts, intent.get("event"), 0),
+                    key="workspace_event",
+                )
+            with d:
+                group_opts = [c["no_group"]] + (categorical_cols or cols)
+                group_display = st.selectbox(
+                    c["group_variable"],
+                    group_opts,
+                    index=_pick_index(group_opts, intent.get("group"), 0),
+                    key="workspace_survival_group",
+                )
+                group = None if group_display == c["no_group"] else group_display
+            config.update(time=time_col, event=event_col, group=group)
+
+            if method == "cox":
+                pred_opts = [
+                    x for x in cols
+                    if x not in {time_col, event_col}
+                ]
+                predictors = st.multiselect(
+                    c["predictors"],
+                    pred_opts,
+                    default=[x for x in intent.get("predictors", []) if x in pred_opts][:6],
+                    key="workspace_cox_predictors",
+                )
+                config["predictors"] = predictors
+
         else:
-            chart_col, summary_col = st.columns([1.28, .72], gap="large")
-            with chart_col:
+            st.caption(
+                "描述性统计将自动汇总全部变量。"
+                if lang == "zh"
+                else "Descriptive statistics will summarize all variables automatically."
+            )
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        # ============================================================
+        # Run
+        # ============================================================
+        st.markdown('<div class="run-panel">', unsafe_allow_html=True)
+        run_analysis = st.button(
+            "✦ " + c["run_analysis_now"],
+            type="primary",
+            use_container_width=True,
+            key="workspace_run_analysis",
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        if run_analysis:
+            try:
+                result = custom_engine.analyze(research_df, config, lang)
+                report_html = custom_engine.build_html_report(
+                    research_df,
+                    config,
+                    result,
+                    research_question,
+                    lang,
+                )
+                st.session_state["workspace_result"] = {
+                    "df": research_df,
+                    "config": config,
+                    "result": result,
+                    "question": research_question,
+                    "report_html": report_html,
+                    "source_label": source_label,
+                }
+                st.session_state["workspace_chart_expanded"] = False
+            except Exception as exc:
+                st.error(f'{c["failed"]}: {exc}')
+
+        # ============================================================
+        # STEP 04 — Result priority
+        # ============================================================
+        payload = st.session_state.get("workspace_result")
+        if payload:
+            result = payload["result"]
+            chart_bytes = base64.b64decode(result["image"])
+            report_html = payload["report_html"]
+
+            st.markdown(
+                f"""
+                <div class="report-hero">
+                    <small>04 · ANALYSIS RESULT</small>
+                    <h2>{c["report_center"]}</h2>
+                    <p>{c["report_center_desc"]}</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
+            r1, r2, r3 = st.columns([1.3, .65, .65])
+            r1.metric(c["method"], result["method"])
+            r2.metric(
+                c["p"],
+                "N/A" if result.get("p") is None else f'{result["p"]:.4g}',
+            )
+            r3.metric("N", len(payload["df"]))
+
+            act1, act2, act3 = st.columns([1, 1.05, 1.25])
+            with act1:
+                if st.button(
+                    c["expand_chart"] if not st.session_state.get("workspace_chart_expanded", False) else c["collapse_chart"],
+                    use_container_width=True,
+                    key="workspace_chart_toggle",
+                ):
+                    st.session_state["workspace_chart_expanded"] = not st.session_state.get("workspace_chart_expanded", False)
+                    st.rerun()
+            with act2:
+                st.download_button(
+                    "↓ " + c["export_chart"],
+                    chart_bytes,
+                    "haiyan_analysis_chart.png",
+                    "image/png",
+                    use_container_width=True,
+                    key="workspace_export_png",
+                )
+            with act3:
+                st.download_button(
+                    "↓ " + c["report_export"],
+                    report_html.encode("utf-8"),
+                    "haiyan_analysis_report.html",
+                    "text/html",
+                    use_container_width=True,
+                    key="workspace_export_report",
+                )
+
+            if st.session_state.get("workspace_chart_expanded", False):
                 st.image(chart_bytes, use_container_width=True)
-            with summary_col:
-                st.markdown(f"**{c['summary']}**")
                 st.dataframe(
                     pd.DataFrame(result["summary"]),
                     use_container_width=True,
                     hide_index=True,
-                    height=300,
                 )
+            else:
+                chart_col, side_col = st.columns([1.25, .75], gap="large")
+                with chart_col:
+                    st.image(chart_bytes, use_container_width=True)
+                with side_col:
+                    st.markdown(f"**{c['conclusion']}**")
+                    st.markdown(
+                        f'<div class="insight-box">✦ {html.escape(result["conclusion"])}</div>',
+                        unsafe_allow_html=True,
+                    )
+                    st.markdown(f"**{c['summary']}**")
+                    st.dataframe(
+                        pd.DataFrame(result["summary"]),
+                        use_container_width=True,
+                        hide_index=True,
+                        height=250,
+                    )
 
-        st.markdown(f"**{c['conclusion']}**")
-        st.markdown(
-            f'<div class="insight-box">✦ {html.escape(result["conclusion"])}</div>',
-            unsafe_allow_html=True,
-        )
-
-        if result.get("cox"):
-            with st.expander(c["cox"], expanded=False):
-                st.dataframe(
-                    pd.DataFrame(result["cox"]),
+            e1, e2 = st.columns(2)
+            with e1:
+                st.download_button(
+                    c["download"],
+                    payload["df"].to_csv(index=False).encode("utf-8-sig"),
+                    "haiyan_analysis_data.csv",
+                    "text/csv",
                     use_container_width=True,
-                    hide_index=True,
+                    key="workspace_export_data",
                 )
-
-        # Result export area
-        export1, export2 = st.columns(2)
-        with export1:
-            st.download_button(
-                c["download"],
-                df.to_csv(index=False).encode("utf-8-sig"),
-                "haiyan_analysis_data.csv",
-                "text/csv",
-                use_container_width=True,
-                key="download_analysis_csv",
-            )
-        with export2:
-            summary_df = pd.DataFrame(result["summary"])
-            st.download_button(
-                c["export_summary"],
-                summary_df.to_csv(index=False).encode("utf-8-sig"),
-                "haiyan_analysis_summary.csv",
-                "text/csv",
-                use_container_width=True,
-                key="download_summary_csv",
-            )
-
-        # --------------------------------------------------------------
-        # Stage 4 — compact asset-saving tail
-        # --------------------------------------------------------------
-        st.markdown(
-            f"""
-            <div class="stage-head">
-                <div class="stage-no">04</div>
-                <div>
-                    <strong>{c["stage4"]}</strong>
-                    <small>{c["stage4_desc"]}</small>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        save_col1, save_col2 = st.columns([1.65, .75])
-        with save_col1:
-            template_name = st.text_input(
-                c["template_name"],
-                value=f"{plan_data.get('disease') or 'research'}_{plan_data.get('endpoint') or 'analysis'}",
-                key="save_template_name",
-            )
-        with save_col2:
-            st.markdown("<div style='height:28px'></div>", unsafe_allow_html=True)
-            if st.button(c["save"], use_container_width=True, key="save_template_btn"):
-                path = ts.save(template_name, plan_data, sql)
-                st.success(f'{c["saved"]}: {path.name}')
-
-        st.caption(c["template_note"])
+            with e2:
+                st.download_button(
+                    c["export_summary"],
+                    pd.DataFrame(result["summary"]).to_csv(index=False).encode("utf-8-sig"),
+                    "haiyan_analysis_summary.csv",
+                    "text/csv",
+                    use_container_width=True,
+                    key="workspace_export_summary",
+                )
 
 # -------------------------------------------------------------------
 # TEMPLATE CENTER
