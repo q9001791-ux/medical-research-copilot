@@ -79,6 +79,30 @@ COPY = {
         "scene_dm_desc": "不同治疗方案 · 随访 HbA1c",
         "scene_htn": "高血压控制评价",
         "scene_htn_desc": "不同治疗方案 · 血压控制率",
+        "scenario_center_title": "科研场景中心",
+        "scenario_center_desc": "从平台内置模拟科研数据出发，查看每个场景的数据结构、适合回答的问题与推荐统计路线，并可一键带入科研分析。",
+        "scenario_select": "选择科研场景",
+        "scenario_population": "研究对象",
+        "scenario_dataset": "数据资产",
+        "scenario_endpoint": "典型研究终点",
+        "scenario_methods": "推荐统计方法",
+        "scenario_fields": "可用变量",
+        "scenario_questions": "推荐研究问题",
+        "scenario_data_profile": "当前模拟数据概览",
+        "scenario_rows": "模拟病例",
+        "scenario_vars": "可分析变量",
+        "scenario_missing": "整体缺失率",
+        "scenario_use": "使用此场景开始分析",
+        "scenario_note": "科研场景用于演示数据结构与分析路线，并不限制你只能提出这些问题。进入分析后仍可自由修改研究问题和统计方法。",
+        "scenario_lung_short": "肺癌",
+        "scenario_breast_short": "乳腺癌",
+        "scenario_crc_short": "结直肠癌",
+        "scenario_dm_short": "糖尿病",
+        "scenario_htn_short": "高血压",
+        "scenario_tumor": "肿瘤研究",
+        "scenario_chronic": "慢病研究",
+        "scenario_ready": "可直接使用平台数据",
+
         "workspace_badge": "RESEARCH WORKSPACE",
         "workspace_title": "新建科研分析",
         "workspace_desc": "选择一个示例或直接输入研究问题。系统将按纵向步骤展示每一个推理与执行阶段。",
@@ -353,7 +377,31 @@ COPY = {
         "scene_dm": "Diabetes effectiveness",
         "scene_dm_desc": "Treatment regimens · Follow-up HbA1c",
         "scene_htn": "Hypertension control",
-        "scene_htn_desc": "Treatment regimens · BP control rate",
+        "scene_htn_desc": "Different regimens · Blood pressure control",
+        "scenario_center_title": "Research Scenario Center",
+        "scenario_center_desc": "Explore the structure, suitable research questions and recommended statistical routes for built-in synthetic datasets, then open a scenario directly in the research workspace.",
+        "scenario_select": "Select research scenario",
+        "scenario_population": "Population",
+        "scenario_dataset": "Data asset",
+        "scenario_endpoint": "Typical endpoint",
+        "scenario_methods": "Recommended methods",
+        "scenario_fields": "Available variables",
+        "scenario_questions": "Suggested research questions",
+        "scenario_data_profile": "Synthetic data profile",
+        "scenario_rows": "Cases",
+        "scenario_vars": "Variables",
+        "scenario_missing": "Missing rate",
+        "scenario_use": "Use this scenario",
+        "scenario_note": "Scenarios demonstrate data structures and analysis routes; they do not restrict the questions you can ask. You can freely edit the research question and statistical method in the workspace.",
+        "scenario_lung_short": "Lung",
+        "scenario_breast_short": "Breast",
+        "scenario_crc_short": "Colorectal",
+        "scenario_dm_short": "Diabetes",
+        "scenario_htn_short": "Hypertension",
+        "scenario_tumor": "Oncology",
+        "scenario_chronic": "Chronic disease",
+        "scenario_ready": "Platform data ready",
+
         "workspace_badge": "RESEARCH WORKSPACE",
         "workspace_title": "Create a research analysis",
         "workspace_desc": "Choose an example or enter your own question. Every reasoning and execution step is shown vertically.",
@@ -600,6 +648,159 @@ EXAMPLES = {
         "Colorectal cancer: KRAS-mutant survival": "Identify KRAS-mutant colorectal cancer patients in the past 3 years and compare survival across treatment regimens",
         "Diabetes: follow-up HbA1c": "Identify type 2 diabetes patients in the past 3 years and compare follow-up HbA1c across treatment regimens",
         "Hypertension: BP control": "Identify hypertension patients in the past 3 years and compare blood pressure control rates across treatment regimens",
+    },
+}
+
+SCENARIO_LIBRARY = {
+    "nsclc": {
+        "icon": "肺",
+        "short_zh": "肺癌",
+        "short_en": "Lung",
+        "title_zh": "肺癌精准治疗与生存分析",
+        "title_en": "Precision lung cancer survival",
+        "category_zh": "肿瘤研究",
+        "category_en": "Oncology",
+        "population_zh": "非小细胞肺癌（NSCLC）患者",
+        "population_en": "Patients with non-small cell lung cancer (NSCLC)",
+        "dataset_zh": "人口学、分子检测、治疗方案、随访与生存数据",
+        "dataset_en": "Demographics, molecular testing, treatment, follow-up and survival",
+        "endpoint_zh": "总生存期（OS）/ 生存事件",
+        "endpoint_en": "Overall survival (OS) / survival event",
+        "methods_zh": "Kaplan-Meier · Log-rank · Cox PH · 相关分析",
+        "methods_en": "Kaplan-Meier · Log-rank · Cox PH · correlation",
+        "fields": ["sex", "age", "molecular_status", "treatment", "os_months", "event"],
+        "questions_zh": [
+            "按 treatment 分组，使用 os_months 和 event 做 Kaplan-Meier 生存分析与 Log-rank 检验。",
+            "分析 age 与 os_months 的 Spearman 相关性，并报告相关系数和 P 值。",
+            "比较不同 treatment 的 os_months 分布差异，并选择合适的组间检验。",
+        ],
+        "questions_en": [
+            "Compare survival by treatment using os_months and event with Kaplan-Meier and Log-rank.",
+            "Assess the Spearman correlation between age and os_months and report the coefficient and P value.",
+            "Compare the distribution of os_months across treatments using an appropriate group test.",
+        ],
+        "default_question_zh": "按 treatment 分组，使用 os_months 和 event 做 Kaplan-Meier 生存分析并进行 Log-rank 检验。",
+        "default_question_en": "Compare survival by treatment using os_months and event with Kaplan-Meier and a Log-rank test.",
+    },
+    "breast": {
+        "icon": "乳",
+        "short_zh": "乳腺癌",
+        "short_en": "Breast",
+        "title_zh": "乳腺癌治疗方案与预后",
+        "title_en": "Breast cancer treatment and prognosis",
+        "category_zh": "肿瘤研究",
+        "category_en": "Oncology",
+        "population_zh": "乳腺癌患者",
+        "population_en": "Patients with breast cancer",
+        "dataset_zh": "人口学、HER2状态、治疗方案、随访与生存数据",
+        "dataset_en": "Demographics, HER2 status, treatment, follow-up and survival",
+        "endpoint_zh": "总生存期（OS）/ 生存事件",
+        "endpoint_en": "Overall survival (OS) / survival event",
+        "methods_zh": "Kaplan-Meier · Log-rank · Cox PH",
+        "methods_en": "Kaplan-Meier · Log-rank · Cox PH",
+        "fields": ["sex", "age", "molecular_status", "treatment", "os_months", "event"],
+        "questions_zh": [
+            "比较不同 treatment 组的总生存情况，绘制 Kaplan-Meier 曲线并做 Log-rank 检验。",
+            "比较不同 treatment 的 os_months 是否存在差异。",
+            "分析 age 与 os_months 是否存在相关性。",
+        ],
+        "questions_en": [
+            "Compare overall survival across treatment groups using Kaplan-Meier and Log-rank.",
+            "Test whether os_months differs across treatment groups.",
+            "Assess the association between age and os_months.",
+        ],
+        "default_question_zh": "比较不同 treatment 组的 os_months/event 生存情况，生成 Kaplan-Meier 曲线并进行 Log-rank 检验。",
+        "default_question_en": "Compare os_months/event survival across treatment groups with Kaplan-Meier and Log-rank.",
+    },
+    "crc": {
+        "icon": "肠",
+        "short_zh": "结直肠癌",
+        "short_en": "Colorectal",
+        "title_zh": "结直肠癌分子分型与治疗",
+        "title_en": "Colorectal molecular subtype and treatment",
+        "category_zh": "肿瘤研究",
+        "category_en": "Oncology",
+        "population_zh": "结直肠癌患者",
+        "population_en": "Patients with colorectal cancer",
+        "dataset_zh": "人口学、KRAS状态、治疗方案、随访与生存数据",
+        "dataset_en": "Demographics, KRAS status, treatment, follow-up and survival",
+        "endpoint_zh": "总生存期（OS）/ 生存事件",
+        "endpoint_en": "Overall survival (OS) / survival event",
+        "methods_zh": "Kaplan-Meier · Log-rank · Cox PH",
+        "methods_en": "Kaplan-Meier · Log-rank · Cox PH",
+        "fields": ["sex", "age", "molecular_status", "treatment", "os_months", "event"],
+        "questions_zh": [
+            "按 treatment 比较 os_months/event 的生存差异。",
+            "比较不同 treatment 的 os_months 分布。",
+            "分析 age 与 os_months 的相关关系。",
+        ],
+        "questions_en": [
+            "Compare os_months/event survival across treatment groups.",
+            "Compare the distribution of os_months across treatments.",
+            "Assess the correlation between age and os_months.",
+        ],
+        "default_question_zh": "按 treatment 分组比较 os_months/event 的生存差异，使用 Kaplan-Meier 与 Log-rank。",
+        "default_question_en": "Compare os_months/event survival by treatment using Kaplan-Meier and Log-rank.",
+    },
+    "t2dm": {
+        "icon": "糖",
+        "short_zh": "糖尿病",
+        "short_en": "Diabetes",
+        "title_zh": "2型糖尿病治疗效果评价",
+        "title_en": "Type 2 diabetes treatment effectiveness",
+        "category_zh": "慢病研究",
+        "category_en": "Chronic disease",
+        "population_zh": "2型糖尿病患者",
+        "population_en": "Patients with type 2 diabetes",
+        "dataset_zh": "人口学、治疗方案、基线/随访 HbA1c 与变化量",
+        "dataset_en": "Demographics, treatment, baseline/follow-up HbA1c and change",
+        "endpoint_zh": "随访 HbA1c / HbA1c 变化量",
+        "endpoint_en": "Follow-up HbA1c / HbA1c change",
+        "methods_zh": "ANOVA · Kruskal-Wallis · 配对检验 · 线性回归",
+        "methods_en": "ANOVA · Kruskal-Wallis · paired tests · linear regression",
+        "fields": ["sex", "age", "treatment", "baseline_hba1c", "followup_hba1c", "hba1c_change"],
+        "questions_zh": [
+            "比较不同 treatment 的 followup_hba1c 是否存在差异。",
+            "比较 baseline_hba1c 与 followup_hba1c 的配对变化。",
+            "分析 age 与 hba1c_change 的相关性。",
+        ],
+        "questions_en": [
+            "Compare followup_hba1c across treatment groups.",
+            "Compare paired baseline_hba1c and followup_hba1c.",
+            "Assess the correlation between age and hba1c_change.",
+        ],
+        "default_question_zh": "比较不同 treatment 的 followup_hba1c 是否存在差异，使用合适的多组连续变量检验。",
+        "default_question_en": "Compare followup_hba1c across treatment groups using an appropriate multi-group continuous-outcome test.",
+    },
+    "hypertension": {
+        "icon": "压",
+        "short_zh": "高血压",
+        "short_en": "Hypertension",
+        "title_zh": "高血压治疗与控制评价",
+        "title_en": "Hypertension treatment and control",
+        "category_zh": "慢病研究",
+        "category_en": "Chronic disease",
+        "population_zh": "高血压患者",
+        "population_en": "Patients with hypertension",
+        "dataset_zh": "人口学、治疗方案、基线/随访血压、变化量与控制结局",
+        "dataset_en": "Demographics, treatment, baseline/follow-up BP, change and control outcome",
+        "endpoint_zh": "血压控制率 / 收缩压变化量",
+        "endpoint_en": "Blood-pressure control / systolic BP change",
+        "methods_zh": "Chi-square · Fisher · ANOVA · Logistic 回归",
+        "methods_en": "Chi-square · Fisher · ANOVA · logistic regression",
+        "fields": ["sex", "age", "treatment", "baseline_sbp", "followup_sbp", "bp_controlled", "sbp_change"],
+        "questions_zh": [
+            "分析 treatment 与 bp_controlled 是否存在统计学关联，使用卡方检验。",
+            "比较不同 treatment 的 followup_sbp 是否存在差异。",
+            "以 bp_controlled 为二分类结局，使用 age 和 treatment 做 Logistic 回归。",
+        ],
+        "questions_en": [
+            "Test the association between treatment and bp_controlled using a Chi-square test.",
+            "Compare followup_sbp across treatment groups.",
+            "Use bp_controlled as a binary outcome and run logistic regression with age and treatment.",
+        ],
+        "default_question_zh": "分析 treatment 与 bp_controlled 是否存在统计学关联，使用卡方检验。",
+        "default_question_en": "Test whether treatment is associated with bp_controlled using a Chi-square test.",
     },
 }
 
@@ -877,6 +1078,88 @@ st.markdown(
     }
     .scene-card strong {font-size:.88rem;color:var(--ink);display:block;margin-bottom:.38rem}
     .scene-card span {font-size:.76rem;line-height:1.55;color:var(--muted)}
+
+    .scenario-center-intro {
+        border:1px solid #DCEAE6;
+        border-radius:17px;
+        padding:.85rem .95rem;
+        background:
+            radial-gradient(circle at 96% 0%,rgba(31,175,154,.09),transparent 11rem),
+            linear-gradient(135deg,#F7FCFA,#FFFFFF);
+        margin:.1rem 0 .8rem;
+    }
+    .scenario-center-intro small {
+        color:#1AA28D;font-weight:900;letter-spacing:.1em;font-size:.64rem;
+    }
+    .scenario-center-intro p {
+        color:#758895;font-size:.72rem;line-height:1.55;margin:.3rem 0 0;
+    }
+    .scenario-detail-card {
+        border:1px solid #DFE9ED;
+        border-radius:17px;
+        background:#FFFFFF;
+        padding:.9rem 1rem;
+        min-height:245px;
+    }
+    .scenario-detail-head {
+        display:flex;gap:.7rem;align-items:center;margin-bottom:.75rem;
+    }
+    .scenario-detail-icon {
+        width:46px;height:46px;border-radius:13px;
+        background:linear-gradient(135deg,#E6F8F3,#DDF4EE);
+        color:#168B77;font-weight:900;font-size:1rem;
+        display:flex;align-items:center;justify-content:center;
+        flex:0 0 auto;
+    }
+    .scenario-detail-head strong {
+        display:block;color:#17364D;font-size:1rem;margin-bottom:.16rem;
+    }
+    .scenario-detail-head span {
+        color:#7A8D99;font-size:.69rem;
+    }
+    .scenario-info-row {
+        display:grid;grid-template-columns:100px 1fr;
+        gap:.6rem;padding:.5rem 0;border-top:1px solid #EDF1F3;
+    }
+    .scenario-info-row b {color:#7B8C98;font-size:.67rem}
+    .scenario-info-row div {color:#3B5669;font-size:.72rem;line-height:1.5}
+    .scenario-question-box {
+        border:1px solid #DFE9ED;
+        border-radius:17px;
+        background:#FBFDFE;
+        padding:.9rem .95rem;
+        min-height:245px;
+    }
+    .scenario-question-box h4 {
+        color:#234259;font-size:.78rem;margin:.05rem 0 .55rem;
+    }
+    .scenario-question-item {
+        display:flex;gap:.45rem;
+        border-bottom:1px solid #E9EFF2;
+        padding:.55rem 0;
+        color:#536C7A;font-size:.7rem;line-height:1.5;
+    }
+    .scenario-question-item:last-child {border-bottom:none}
+    .scenario-question-no {
+        width:22px;height:22px;border-radius:7px;
+        background:#E9F7F3;color:#178C78;
+        display:flex;align-items:center;justify-content:center;
+        flex:0 0 auto;font-size:.62rem;font-weight:900;
+    }
+    .scenario-field-wrap {
+        display:flex;flex-wrap:wrap;gap:.32rem;margin-top:.4rem;
+    }
+    .scenario-field {
+        background:#F2F7F8;border:1px solid #E2EAED;
+        color:#607783;border-radius:999px;
+        padding:.27rem .46rem;font-size:.64rem;
+    }
+    .scenario-footer-note {
+        background:#FFF9EC;border:1px solid #F0E2BA;
+        color:#74612D;border-radius:11px;
+        padding:.62rem .72rem;font-size:.68rem;line-height:1.5;
+        margin:.65rem 0 .2rem;
+    }
 
     /* Workspace */
     .workspace-head {
@@ -2102,6 +2385,135 @@ def _show_data_import_dialog(lang, c):
 
 
 
+
+def _show_scenario_center(lang, c):
+    @st.dialog(c["scenario_center_title"], width="large")
+    def _dialog():
+        st.html(
+            f"""
+            <div class="scenario-center-intro">
+                <small>RESEARCH SCENARIO LIBRARY</small>
+                <p>{c["scenario_center_desc"]}</p>
+            </div>
+            """
+        )
+
+        codes = list(SCENARIO_LIBRARY.keys())
+        label_key = "short_zh" if lang == "zh" else "short_en"
+        selected_code = st.segmented_control(
+            c["scenario_select"],
+            codes,
+            format_func=lambda code: SCENARIO_LIBRARY[code][label_key],
+            default=st.session_state.get("scenario_center_selected", "nsclc"),
+            key="scenario_center_selected",
+            label_visibility="collapsed",
+        )
+        if not selected_code:
+            selected_code = "nsclc"
+
+        scene = SCENARIO_LIBRARY[selected_code]
+        suffix = "zh" if lang == "zh" else "en"
+
+        # Dynamic profile from the same dataset used by the analysis workspace.
+        rows = "-"
+        variables = len(scene["fields"])
+        missing_rate = "-"
+        try:
+            scenario_df = custom_engine.load_platform_dataset(selected_code)
+            if scenario_df is not None:
+                profile = custom_engine.profile(scenario_df)
+                rows = f"{profile.rows:,}"
+                variables = profile.columns
+                missing_rate = f"{profile.missing_rate:.1%}"
+        except Exception:
+            pass
+
+        m1, m2, m3 = st.columns(3)
+        m1.metric(c["scenario_rows"], rows)
+        m2.metric(c["scenario_vars"], variables)
+        m3.metric(c["scenario_missing"], missing_rate)
+
+        left, right = st.columns([1.05, .95], gap="large")
+
+        with left:
+            fields_html = "".join(
+                f'<span class="scenario-field">{html.escape(str(field))}</span>'
+                for field in scene["fields"]
+            )
+            st.html(
+                f"""
+                <div class="scenario-detail-card">
+                    <div class="scenario-detail-head">
+                        <div class="scenario-detail-icon">{scene["icon"]}</div>
+                        <div>
+                            <strong>{html.escape(scene[f"title_{suffix}"])}</strong>
+                            <span>{html.escape(scene[f"category_{suffix}"])} · {c["scenario_ready"]}</span>
+                        </div>
+                    </div>
+                    <div class="scenario-info-row">
+                        <b>{c["scenario_population"]}</b>
+                        <div>{html.escape(scene[f"population_{suffix}"])}</div>
+                    </div>
+                    <div class="scenario-info-row">
+                        <b>{c["scenario_dataset"]}</b>
+                        <div>{html.escape(scene[f"dataset_{suffix}"])}</div>
+                    </div>
+                    <div class="scenario-info-row">
+                        <b>{c["scenario_endpoint"]}</b>
+                        <div>{html.escape(scene[f"endpoint_{suffix}"])}</div>
+                    </div>
+                    <div class="scenario-info-row">
+                        <b>{c["scenario_methods"]}</b>
+                        <div>{html.escape(scene[f"methods_{suffix}"])}</div>
+                    </div>
+                    <div style="margin-top:.6rem;color:#7B8D99;font-size:.67rem">
+                        {c["scenario_fields"]}
+                    </div>
+                    <div class="scenario-field-wrap">{fields_html}</div>
+                </div>
+                """
+            )
+
+        with right:
+            questions = scene[f"questions_{suffix}"]
+            q_html = "".join(
+                f"""
+                <div class="scenario-question-item">
+                    <span class="scenario-question-no">{i}</span>
+                    <div>{html.escape(question)}</div>
+                </div>
+                """
+                for i, question in enumerate(questions, start=1)
+            )
+            st.html(
+                f"""
+                <div class="scenario-question-box">
+                    <h4>✦ {c["scenario_questions"]}</h4>
+                    {q_html}
+                </div>
+                """
+            )
+
+        st.html(f'<div class="scenario-footer-note">ℹ {c["scenario_note"]}</div>')
+
+        if st.button(
+            "→ " + c["scenario_use"],
+            type="primary",
+            use_container_width=True,
+            key="scenario_use_button",
+        ):
+            st.session_state["workspace_active_source"] = "platform"
+            st.session_state["workspace_platform_active"] = selected_code
+            st.session_state["workspace_platform_dataset_selector"] = selected_code
+            st.session_state["workspace_question"] = scene[f"default_question_{suffix}"]
+            st.session_state.pop("workspace_result", None)
+            st.session_state.page = "analysis"
+            st.rerun()
+
+    _dialog()
+
+
+
 # -------------------------------------------------------------------
 # HOME
 # -------------------------------------------------------------------
@@ -2127,7 +2539,13 @@ if st.session_state.page == "home":
             if st.button("→  " + c["start"], type="primary", use_container_width=True, key="hero_start"):
                 goto("analysis")
         with b2:
-            st.button(c["view_examples"], use_container_width=True, disabled=True, help=c["scenes_title"], key="hero_examples")
+            if st.button(
+                c["view_examples"],
+                use_container_width=True,
+                help=c["scenes_title"],
+                key="hero_examples",
+            ):
+                _show_scenario_center(lang, c)
 
         st.markdown(
             f"""
@@ -2250,6 +2668,15 @@ if st.session_state.page == "home":
         """,
         unsafe_allow_html=True,
     )
+
+    scene_cta_left, scene_cta_mid, scene_cta_right = st.columns([1.3, 1, 1.3])
+    with scene_cta_mid:
+        if st.button(
+            "✦ " + c["view_examples"],
+            use_container_width=True,
+            key="scene_center_bottom",
+        ):
+            _show_scenario_center(lang, c)
 
 # -------------------------------------------------------------------
 # ANALYSIS
